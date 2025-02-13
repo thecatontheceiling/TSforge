@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTSforge", "LibTSforge\LibTSforge.csproj", "{E3E86A88-67CE-46A1-AF96-3ED474CF8EBA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSforgeCLI", "TSforgeCLI\TSforgeCLI.csproj", "{E83BFDE0-28D6-435C-B7D9-059E1D3F5C60}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3E86A88-67CE-46A1-AF96-3ED474CF8EBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3E86A88-67CE-46A1-AF96-3ED474CF8EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3E86A88-67CE-46A1-AF96-3ED474CF8EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3E86A88-67CE-46A1-AF96-3ED474CF8EBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E83BFDE0-28D6-435C-B7D9-059E1D3F5C60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E83BFDE0-28D6-435C-B7D9-059E1D3F5C60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E83BFDE0-28D6-435C-B7D9-059E1D3F5C60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E83BFDE0-28D6-435C-B7D9-059E1D3F5C60}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AFB9975C-0AA3-4495-8EE7-6CEFBC6C0774}
+	EndGlobalSection
+EndGlobal
