@@ -121,7 +121,7 @@ Probably not. If they do, please tell us so we can laugh to ourselves like a bun
 
 ### Special Thanks
 
-- BetaWiki - Supplying and documenting leaked beta builds used for reverse engineering
+- BetaWiki - Documenting leaked beta builds used for reverse engineering
 - Rairii - Assistance with initial reverse engineering efforts
 - Microsoft - A fun challenge
 
