@@ -75,7 +75,7 @@ You can use the `/igpk` and `/zcid` options with the activation ID of the KMS Ho
 
 ### Why is Windows Vista not supported by any activation methods?
 
-Windows Vista contains a driver which holds a permanent [handle](https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/object-handles) to the physical store, even when SLSvc is not running. This prevents TSforge from writing new trusted store data while the system is booted without abusing access to another kernel driver. Although the physical store can be modified offline, this would require hosting TSforge in a [WinPE](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/winpe-intro) image, which lacks many of the tools and APIs required by both MAS and TSforge. As of yet, this has prevented us from implementing Vista support.
+Windows Vista contains a driver which holds a permanent [handle](https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/object-handles) to the physical store, even when SLSvc is stopped after initial startup. This prevents TSforge from writing new trusted store data while the system is booted. There are theoretical workarounds to this issue, but they require an extraordinary amount of bug-prone, specialized code specific to Vista. For these reasons, we do not plan to support Vista/Server 2008. 
 
 ### How do I prevent de-activation due to WAT on Windows 7?
 
