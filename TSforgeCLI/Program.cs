@@ -4,6 +4,7 @@ namespace TSforgeCLI
     using LibTSforge;
     using LibTSforge.Activators;
     using LibTSforge.Modifiers;
+    using LibTSforge.SPP;
 
     public class Program
     {
@@ -55,11 +56,11 @@ namespace TSforgeCLI
 
                 if (options.Dump)
                 {
-                    Utils.DumpStore(version, production, options.DumpFilePath, options.EncrFilePath);
+                    SPPUtils.DumpStore(version, production, options.DumpFilePath, options.EncrFilePath);
                 }
                 else if (options.Load)
                 {
-                    Utils.LoadStore(version, production, options.LoadFilePath);
+                    SPPUtils.LoadStore(version, production, options.LoadFilePath);
                 }
                 else if (options.KMS4k)
                 {
@@ -91,7 +92,7 @@ namespace TSforgeCLI
                 }
                 else if (options.KMSHostCharge)
                 {
-                    KMSHostCharge.Charge(version, options.ActivationId, production);
+                    KMSHostCharge.Charge(version, production, options.ActivationId);
                 }
                 else if (options.TamperedFlagsDelete)
                 {

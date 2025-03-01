@@ -7,7 +7,7 @@ namespace LibTSforge.Modifiers
 
     public static class KMSHostCharge
     {
-        public static void Charge(PSVersion version, Guid actId, bool production)
+        public static void Charge(PSVersion version, bool production, Guid actId)
         {
             if (actId == Guid.Empty)
             {
@@ -52,46 +52,46 @@ namespace LibTSforge.Modifiers
             writer.Write((byte)currClients);
             byte[] reqCounts = writer.GetBytes();
 
-            Utils.KillSPP();
+            SPPUtils.KillSPP(version);
 
             Logger.WriteLine("Writing TrustedStore data...");
 
-            using (IPhysicalStore store = Utils.GetStore(version, production))
+            using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
-                VariableBag kmsCountData = new VariableBag();
-                kmsCountData.Blocks.AddRange(new CRCBlock[]
+                VariableBag kmsCountData = new VariableBag(version);
+                kmsCountData.Blocks.AddRange(new CRCBlockModern[]
                 {
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.BINARY,
                         KeyAsStr = "SppBindingLicenseData",
                         Value = hwidBlock
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.UINT,
                         Key = new byte[] { },
                         ValueAsInt = (uint)totalClients
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.UINT,
                         Key = new byte[] { },
                         ValueAsInt = 1051200000
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.UINT,
                         Key = new byte[] { },
                         ValueAsInt = (uint)currClients
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.BINARY,
                         Key = new byte[] { },
                         Value = cmidGuids
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.BINARY,
                         Key = new byte[] { },

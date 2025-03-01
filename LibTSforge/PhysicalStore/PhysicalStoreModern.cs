@@ -320,7 +320,7 @@ namespace LibTSforge.PhysicalStore
         public PhysicalStoreModern(string tsPath, bool production, PSVersion version)
         {
             TSFile = File.Open(tsPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-            Deserialize(PhysStoreCrypto.DecryptPhysicalStore(TSFile.ReadAllBytes(), production));
+            Deserialize(PhysStoreCrypto.DecryptPhysicalStore(TSFile.ReadAllBytes(), production, version));
             TSFile.Seek(0, SeekOrigin.Begin);
             Version = version;
             Production = production;
@@ -340,7 +340,7 @@ namespace LibTSforge.PhysicalStore
 
         public byte[] ReadRaw()
         {
-            byte[] data = PhysStoreCrypto.DecryptPhysicalStore(TSFile.ReadAllBytes(), Production);
+            byte[] data = PhysStoreCrypto.DecryptPhysicalStore(TSFile.ReadAllBytes(), Production, Version);
             TSFile.Seek(0, SeekOrigin.Begin);
             return data;
         }

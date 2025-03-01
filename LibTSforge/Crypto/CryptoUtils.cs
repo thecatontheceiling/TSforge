@@ -106,8 +106,19 @@ namespace LibTSforge.Crypto
 
         public static bool HMACVerify(byte[] key, byte[] data, byte[] signature)
         {
-            HMACSHA1 hmac = new HMACSHA1(key);
             return Enumerable.SequenceEqual(signature, HMACSign(key, data));
+        }
+
+        public static byte[] SaltSHASum(byte[] salt, byte[] data)
+        {
+            SHA1 sha1 = SHA1.Create();
+            byte[] sha_data = salt.Concat(data).ToArray();
+            return sha1.ComputeHash(sha_data);
+        }
+
+        public static bool SaltSHAVerify(byte[] salt, byte[] data, byte[] checksum)
+        {
+            return Enumerable.SequenceEqual(checksum, SaltSHASum(salt, data));
         }
 
         public static byte[] SHA256Hash(byte[] data)

@@ -226,157 +226,6 @@ namespace LibTSforge
             return ~crc;
         }
 
-        public static void KillSPP()
-        {
-            ServiceController sc;
-
-            try
-            {
-                sc = new ServiceController("sppsvc");
-
-                if (sc.Status == ServiceControllerStatus.Stopped)
-                    return;
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new InvalidOperationException("Unable to access sppsvc: " + ex.Message);
-            }
-
-            Logger.WriteLine("Stopping sppsvc...");
-
-            bool stopped = false;
-
-            for (int i = 0; stopped == false && i < 60; i++)
-            {
-                try
-                {
-                    if (sc.Status != ServiceControllerStatus.StopPending)
-                        sc.Stop();
-
-                    sc.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromMilliseconds(500));
-                }
-                catch (System.ServiceProcess.TimeoutException)
-                {
-                    continue;
-                }
-                catch (InvalidOperationException)
-                {
-                    System.Threading.Thread.Sleep(500);
-                    continue;
-                }
-
-                stopped = true;
-            }
-
-            if (!stopped)
-                throw new System.TimeoutException("Failed to stop sppsvc");
-
-            Logger.WriteLine("sppsvc stopped successfully.");
-        }
-
-        public static string GetPSPath(PSVersion version)
-        {
-            switch (version)
-            {
-                case PSVersion.Win7:
-                    return Directory.GetFiles(
-                        Environment.GetFolderPath(Environment.SpecialFolder.System),
-                        "7B296FB0-376B-497e-B012-9C450E1B7327-*.C7483456-A289-439d-8115-601632D005A0")
-                    .FirstOrDefault() ?? "";
-                case PSVersion.Win8Early:
-                case PSVersion.WinBlue:
-                case PSVersion.Win8:
-                case PSVersion.WinModern:
-                    return Path.Combine(
-                        Environment.ExpandEnvironmentVariables(
-                            (string)Registry.GetValue(
-                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
-                                "TokenStore",
-                                string.Empty
-                                )
-                            ),
-                            "data.dat"
-                        );
-                default:
-                    return "";
-            }
-        }
-
-        public static string GetTokensPath(PSVersion version)
-        {
-            switch (version)
-            {
-                case PSVersion.Win7:
-                    return Path.Combine(
-                        Environment.ExpandEnvironmentVariables("%WINDIR%"),
-                        @"ServiceProfiles\NetworkService\AppData\Roaming\Microsoft\SoftwareProtectionPlatform\tokens.dat"
-                    );
-                case PSVersion.Win8Early:
-                case PSVersion.WinBlue:
-                case PSVersion.Win8:
-                case PSVersion.WinModern:
-                    return Path.Combine(
-                        Environment.ExpandEnvironmentVariables(
-                            (string)Registry.GetValue(
-                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
-                                "TokenStore",
-                                string.Empty
-                                )
-                            ),
-                            "tokens.dat"
-                        );
-                default:
-                    return "";
-            }
-        }
-
-        public static IPhysicalStore GetStore(PSVersion version, bool production)
-        {
-            string psPath;
-
-            try
-            {
-                psPath = GetPSPath(version);
-            }
-            catch
-            {
-                throw new FileNotFoundException("Failed to get path of physical store.");
-            }
-
-            if (string.IsNullOrEmpty(psPath) || !File.Exists(psPath))
-            {
-                throw new FileNotFoundException(string.Format("Physical store not found at expected path {0}.", psPath));
-            }
-
-            if (version == PSVersion.Vista)
-            {
-                throw new NotSupportedException("Physical store editing is not supported for Windows Vista.");
-            }
-
-            return version == PSVersion.Win7 ? new PhysicalStoreWin7(psPath, production) : (IPhysicalStore)new PhysicalStoreModern(psPath, production, version);
-        }
-
-        public static ITokenStore GetTokenStore(PSVersion version)
-        {
-            string tokPath;
-
-            try
-            {
-                tokPath = GetTokensPath(version);
-            }
-            catch
-            {
-                throw new FileNotFoundException("Failed to get path of physical store.");
-            }
-
-            if (string.IsNullOrEmpty(tokPath) || !File.Exists(tokPath))
-            {
-                throw new FileNotFoundException(string.Format("Token store not found at expected path {0}.", tokPath));
-            }
-
-            return new TokenStoreModern(tokPath);
-        }
-
         public static string GetArchitecture()
         {
             string arch = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE", EnvironmentVariableTarget.Machine).ToUpperInvariant();
@@ -392,7 +241,7 @@ namespace LibTSforge
             if (build >= 7600 && build <= 7602) return PSVersion.Win7;
             if (build == 9200) return PSVersion.Win8;
 
-            throw new NotSupportedException("Unable to auto-detect version info, please specify one manually using the /ver argument.");
+            throw new NotSupportedException("Unable to auto-detect version info");
         }
 
         public static bool DetectCurrentKey()
@@ -403,7 +252,7 @@ namespace LibTSforge
             {
                 foreach (string subKey in wpaKey.GetSubKeyNames())
                 {
-                    if (subKey.StartsWith("8DEC0AF1") && subKey.EndsWith("-1"))
+                    if (subKey.StartsWith("8DEC0AF1"))
                     {
                         return subKey.Contains("P");
                     }
@@ -411,46 +260,6 @@ namespace LibTSforge
             }
 
             throw new FileNotFoundException("Failed to autodetect key type, specify physical store key with /prod or /test arguments.");
-        }
-
-        public static void DumpStore(PSVersion version, bool production, string filePath, string encrFilePath)
-        {
-            if (encrFilePath == null)
-            {
-                encrFilePath = GetPSPath(version);
-            }
-
-            if (string.IsNullOrEmpty(encrFilePath) || !File.Exists(encrFilePath))
-            {
-                throw new FileNotFoundException("Store does not exist at expected path '" + encrFilePath + "'.");
-            }
-
-            KillSPP();
-
-            using (FileStream fs = File.Open(encrFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-            {
-                byte[] encrData = fs.ReadAllBytes();
-                File.WriteAllBytes(filePath, PhysStoreCrypto.DecryptPhysicalStore(encrData, production));
-            }
-
-            Logger.WriteLine("Store dumped successfully to '" + filePath + "'.");
-        }
-
-        public static void LoadStore(PSVersion version, bool production, string filePath)
-        {
-            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
-            {
-                throw new FileNotFoundException("Store file '" + filePath + "' does not exist.");
-            }
-
-            KillSPP();
-
-            using (IPhysicalStore store = GetStore(version, production))
-            {
-                store.WriteRaw(File.ReadAllBytes(filePath));
-            }
-
-            Logger.WriteLine("Loaded store file succesfully.");
         }
     }
 

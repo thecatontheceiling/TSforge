@@ -117,6 +117,7 @@ Probably not. If they do, please tell us so we can laugh to ourselves like a bun
 ### Other Contributions
 
 - SpCreatePackaedLicense - Tool development, testing
+- Emma (IPG) - Vista SPSys IOCTLs and physical store format
 - May - Code formatting, build setup
 
 ### Special Thanks

@@ -60,22 +60,22 @@ namespace LibTSforge.SPP
 
         public Guid GetPkeyId()
         {
-            VariableBag pkb = new VariableBag();
-            pkb.Blocks.AddRange(new CRCBlock[]
+            VariableBag pkb = new VariableBag(PSVersion.WinModern);
+            pkb.Blocks.AddRange(new CRCBlockModern[]
             {
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.STRING,
                     KeyAsStr = "SppPkeyBindingProductKey",
                     ValueAsStr = ToString()
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.BINARY,
                     KeyAsStr = "SppPkeyBindingMiscData",
                     Value = new byte[] { }
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.STRING,
                     KeyAsStr = "SppPkeyBindingAlgorithm",

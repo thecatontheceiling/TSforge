@@ -3,14 +3,16 @@ namespace LibTSforge.Modifiers
     using System.Collections.Generic;
     using System.Linq;
     using LibTSforge.PhysicalStore;
+    using LibTSforge.SPP;
     using LibTSforge;
+
     public static class KeyChangeLockDelete
     {
         public static void Delete(PSVersion version, bool production)
         {
-            Utils.KillSPP();
+            SPPUtils.KillSPP(version);
             Logger.WriteLine("Writing TrustedStore data...");
-            using (IPhysicalStore store = Utils.GetStore(version, production))
+            using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
                 List<string> values = new List<string>
                 {

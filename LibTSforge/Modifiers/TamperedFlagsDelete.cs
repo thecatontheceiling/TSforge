@@ -3,16 +3,17 @@ namespace LibTSforge.Modifiers
     using System;
     using System.Linq;
     using LibTSforge.PhysicalStore;
+    using LibTSforge.SPP;
 
     public static class TamperedFlagsDelete
     {
         public static void DeleteTamperFlags(PSVersion version, bool production)
         {
-            Utils.KillSPP();
+            SPPUtils.KillSPP(version);
 
             Logger.WriteLine("Writing TrustedStore data...");
 
-            using (IPhysicalStore store = Utils.GetStore(version, production))
+            using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
                 if (version != PSVersion.Win7)
                 {

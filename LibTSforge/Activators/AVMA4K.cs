@@ -34,11 +34,11 @@ namespace LibTSforge.Activators
                 throw new NotSupportedException("Non-VT:IA product key installed.");
             }
 
-            Utils.KillSPP();
+            SPPUtils.KillSPP(version);
 
             Logger.WriteLine("Writing TrustedStore data...");
 
-            using (IPhysicalStore store = Utils.GetStore(version, production))
+            using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
                 string key = string.Format("SPPSVC\\{0}\\{1}", appId, actId);
 
@@ -57,23 +57,23 @@ namespace LibTSforge.Activators
                 timerTime = crcBindTime / 10000;
                 expiry /= 10000;
 
-                VariableBag avmaBinding = new VariableBag();
+                VariableBag avmaBinding = new VariableBag(version);
 
-                avmaBinding.Blocks.AddRange(new CRCBlock[]
+                avmaBinding.Blocks.AddRange(new CRCBlockModern[]
                 {
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.BINARY,
                         Key = new byte[] { },
                         Value = BitConverter.GetBytes(crcBindTime),
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.STRING,
                         Key = new byte[] { },
                         ValueAsStr = "AVMA4K",
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.STRING,
                         Key = new byte[] { },

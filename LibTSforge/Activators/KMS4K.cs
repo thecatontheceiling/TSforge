@@ -29,11 +29,11 @@ namespace LibTSforge.Activators
                 throw new NotSupportedException("Non-Volume:GVLK product key installed.");
             }
 
-            Utils.KillSPP();
+            SPPUtils.KillSPP(version);
 
             Logger.WriteLine("Writing TrustedStore data...");
 
-            using (IPhysicalStore store = Utils.GetStore(version, production))
+            using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
                 string key = string.Format("SPPSVC\\{0}\\{1}", appId, actId);
 
@@ -42,7 +42,7 @@ namespace LibTSforge.Activators
                 ulong time2 = (ulong)DateTime.UtcNow.ToFileTime();
                 ulong expiry = Constants.TimerMax;
 
-                if (version == PSVersion.Win7)
+                if (version == PSVersion.Vista || version == PSVersion.Win7)
                 {
                     unknown = 0x800000000;
                     time1 = 0;
@@ -58,86 +58,119 @@ namespace LibTSforge.Activators
                     expiry /= 10000;
                 }
 
-                byte[] hwidBlock = Constants.UniversalHWIDBlock;
-                byte[] kmsResp;
-
-                switch (version)
+                if (version == PSVersion.Vista)
                 {
-                    case PSVersion.Win7:
-                        kmsResp = Constants.KMSv4Response;
-                        break;
-                    case PSVersion.Win8:
-                        kmsResp = Constants.KMSv5Response;
-                        break;
-                    case PSVersion.WinBlue:
-                    case PSVersion.WinModern:
-                        kmsResp = Constants.KMSv6Response;
-                        break;
-                    default:
-                        throw new NotSupportedException("Unsupported PSVersion.");
+                    VistaTimer vistaTimer = new VistaTimer();
+                    vistaTimer.Time = time2;
+                    vistaTimer.Expiry = expiry;
+
+                    string vistaTimerName = string.Format("msft:sl/timer/VLExpiration/VOLUME/{0}/{1}", appId, actId);
+
+                    store.DeleteBlock(key, vistaTimerName);
+                    store.DeleteBlock(key, "45E81E65-6944-422E-9C02-D83F7E5F5A58");
+
+                    store.AddBlocks(new PSBlock[]
+                    {
+                        new PSBlock
+                        {
+                            Type = BlockType.TIMER,
+                            Flags = 0,
+                            KeyAsStr = key,
+                            ValueAsStr = vistaTimerName,
+                            Data = vistaTimer.CastToArray()
+                        },
+                        new PSBlock
+                        {
+                            Type = BlockType.NAMED,
+                            Flags = 0,
+                            KeyAsStr = key,
+                            ValueAsStr = "45E81E65-6944-422E-9C02-D83F7E5F5A58",
+                            Data = new Guid().ToByteArray()
+                        }
+                    });
                 }
-
-                VariableBag kmsBinding = new VariableBag();
-
-                kmsBinding.Blocks.AddRange(new CRCBlock[]
+                else
                 {
-                    new CRCBlock
+                    byte[] hwidBlock = Constants.UniversalHWIDBlock;
+                    byte[] kmsResp;
+
+                    switch (version)
+                    {
+                        case PSVersion.Win7:
+                            kmsResp = Constants.KMSv4Response;
+                            break;
+                        case PSVersion.Win8:
+                            kmsResp = Constants.KMSv5Response;
+                            break;
+                        case PSVersion.WinBlue:
+                        case PSVersion.WinModern:
+                            kmsResp = Constants.KMSv6Response;
+                            break;
+                        default:
+                            throw new NotSupportedException("Unsupported PSVersion.");
+                    }
+
+                    VariableBag kmsBinding = new VariableBag(version);
+
+                    kmsBinding.Blocks.AddRange(new CRCBlockModern[]
+                    {
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.BINARY,
                         Key = new byte[] { },
                         Value = kmsResp
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.STRING,
                         Key = new byte[] { },
                         ValueAsStr = "msft:rm/algorithm/hwid/4.0"
                     },
-                    new CRCBlock
+                    new CRCBlockModern
                     {
                         DataType = CRCBlockType.BINARY,
                         KeyAsStr = "SppBindingLicenseData",
                         Value = hwidBlock
                     }
-                });
+                    });
 
-                if (version == PSVersion.WinModern)
-                {
-                    kmsBinding.Blocks.AddRange(new CRCBlock[]
+                    if (version == PSVersion.WinModern)
                     {
-                        new CRCBlock
+                        kmsBinding.Blocks.AddRange(new CRCBlockModern[]
+                        {
+                        new CRCBlockModern
                         {
                             DataType = CRCBlockType.STRING,
                             Key = new byte[] { },
                             ValueAsStr = "massgrave.dev"
                         },
-                        new CRCBlock
+                        new CRCBlockModern
                         {
                             DataType = CRCBlockType.STRING,
                             Key = new byte[] { },
                             ValueAsStr = "6969"
                         }
-                    });
-                }
+                        });
+                    }
 
-                byte[] kmsBindingData = kmsBinding.Serialize();
+                    byte[] kmsBindingData = kmsBinding.Serialize();
 
-                Timer kmsTimer = new Timer
-                {
-                    Unknown = unknown,
-                    Time1 = time1,
-                    Time2 = time2,
-                    Expiry = expiry
-                };
+                    Timer kmsTimer = new Timer
+                    {
+                        Unknown = unknown,
+                        Time1 = time1,
+                        Time2 = time2,
+                        Expiry = expiry
+                    };
 
-                string storeVal = string.Format("msft:spp/kms/bind/2.0/store/{0}/{1}", appId, actId);
-                string timerVal = string.Format("msft:spp/kms/bind/2.0/timer/{0}/{1}", appId, actId);
+                    string storeVal = string.Format("msft:spp/kms/bind/2.0/store/{0}/{1}", appId, actId);
+                    string timerVal = string.Format("msft:spp/kms/bind/2.0/timer/{0}/{1}", appId, actId);
 
-                store.DeleteBlock(key, storeVal);
-                store.DeleteBlock(key, timerVal);
+                    store.DeleteBlock(key, storeVal);
+                    store.DeleteBlock(key, timerVal);
 
-                store.AddBlocks(new PSBlock[]
-                {
+                    store.AddBlocks(new PSBlock[]
+                    {
                     new PSBlock
                     {
                         Type = BlockType.NAMED,
@@ -154,10 +187,11 @@ namespace LibTSforge.Activators
                         ValueAsStr = timerVal,
                         Data = kmsTimer.CastToArray()
                     }
-                });
+                    });
+                }
             }
 
-            SLApi.RefreshLicenseStatus();
+                SPPUtils.RestartSPP(version);
             SLApi.FireStateChangedEvent(appId);
             Logger.WriteLine("Activated using KMS4k successfully.");
         }

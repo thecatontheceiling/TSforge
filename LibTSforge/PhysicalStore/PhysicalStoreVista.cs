@@ -5,22 +5,10 @@ namespace LibTSforge.PhysicalStore
     using System.IO;
     using LibTSforge.Crypto;
 
-    public class Win7Block
+    public class VistaBlock
     {
         public BlockType Type;
         public uint Flags;
-        public byte[] Key;
-        public string KeyAsStr
-        {
-            get
-            {
-                return Utils.DecodeString(Key);
-            }
-            set
-            {
-                Key = Utils.EncodeString(value);
-            }
-        }
         public byte[] Value;
         public string ValueAsStr
         {
@@ -72,41 +60,36 @@ namespace LibTSforge.PhysicalStore
         {
             writer.Write((uint)Type);
             writer.Write(Flags);
-            writer.Write(Key.Length);
             writer.Write(Value.Length);
             writer.Write(Data.Length);
-            writer.Write(Key);
             writer.Write(Value);
             writer.Write(Data);
         }
 
-        internal static Win7Block Decode(BinaryReader reader)
+        internal static VistaBlock Decode(BinaryReader reader)
         {
             uint type = reader.ReadUInt32();
             uint flags = reader.ReadUInt32();
 
-            int keyLen = reader.ReadInt32();
             int valueLen = reader.ReadInt32();
             int dataLen = reader.ReadInt32();
 
-            byte[] key = reader.ReadBytes(keyLen);
             byte[] value = reader.ReadBytes(valueLen);
             byte[] data = reader.ReadBytes(dataLen);
-            return new Win7Block
+            return new VistaBlock
             {
                 Type = (BlockType)type,
                 Flags = flags,
-                Key = key,
                 Value = value,
                 Data = data,
             };
         }
     }
 
-    public sealed class PhysicalStoreWin7 : IPhysicalStore
+    public sealed class PhysicalStoreVista : IPhysicalStore
     {
         private byte[] PreHeaderBytes = new byte[] { };
-        private readonly List<Win7Block> Blocks = new List<Win7Block>();
+        private readonly List<VistaBlock> Blocks = new List<VistaBlock>();
         private readonly FileStream TSPrimary;
         private readonly FileStream TSSecondary;
         private readonly bool Production;
@@ -116,7 +99,7 @@ namespace LibTSforge.PhysicalStore
             BinaryWriter writer = new BinaryWriter(new MemoryStream());
             writer.Write(PreHeaderBytes);
 
-            foreach (Win7Block block in Blocks)
+            foreach (VistaBlock block in Blocks)
             {
                 block.Encode(writer);
                 writer.Align(4);
@@ -134,18 +117,17 @@ namespace LibTSforge.PhysicalStore
 
             while (reader.BaseStream.Position < len - 0x14)
             {
-                Blocks.Add(Win7Block.Decode(reader));
+                Blocks.Add(VistaBlock.Decode(reader));
                 reader.Align(4);
             }
         }
 
         public void AddBlock(PSBlock block)
         {
-            Blocks.Add(new Win7Block
+            Blocks.Add(new VistaBlock
             {
                 Type = block.Type,
                 Flags = block.Flags,
-                Key = block.Key,
                 Value = block.Value,
                 Data = block.Data
             });
@@ -161,15 +143,15 @@ namespace LibTSforge.PhysicalStore
 
         public PSBlock GetBlock(string key, string value)
         {
-            foreach (Win7Block block in Blocks)
+            foreach (VistaBlock block in Blocks)
             {
-                if (block.KeyAsStr == key && block.ValueAsStr == value)
+                if (block.ValueAsStr == value)
                 {
                     return new PSBlock
                     {
                         Type = block.Type,
                         Flags = block.Flags,
-                        Key = block.Key,
+                        Key = new byte[0],
                         Value = block.Value,
                         Data = block.Data
                     };
@@ -181,15 +163,15 @@ namespace LibTSforge.PhysicalStore
 
         public PSBlock GetBlock(string key, uint value)
         {
-            foreach (Win7Block block in Blocks)
+            foreach (VistaBlock block in Blocks)
             {
-                if (block.KeyAsStr == key && block.ValueAsInt == value)
+                if (block.ValueAsInt == value)
                 {
                     return new PSBlock
                     {
                         Type = block.Type,
                         Flags = block.Flags,
-                        Key = block.Key,
+                        Key = new byte[0],
                         Value = block.Value,
                         Data = block.Data
                     };
@@ -203,9 +185,9 @@ namespace LibTSforge.PhysicalStore
         {
             for (int i = 0; i < Blocks.Count; i++)
             {
-                Win7Block block = Blocks[i];
+                VistaBlock block = Blocks[i];
 
-                if (block.KeyAsStr == key && block.ValueAsStr == value)
+                if (block.ValueAsStr == value)
                 {
                     block.Data = data;
                     Blocks[i] = block;
@@ -218,9 +200,9 @@ namespace LibTSforge.PhysicalStore
         {
             for (int i = 0; i < Blocks.Count; i++)
             {
-                Win7Block block = Blocks[i];
+                VistaBlock block = Blocks[i];
 
-                if (block.KeyAsStr == key && block.ValueAsInt == value)
+                if (block.ValueAsInt == value)
                 {
                     block.Data = data;
                     Blocks[i] = block;
@@ -251,9 +233,9 @@ namespace LibTSforge.PhysicalStore
 
         public void DeleteBlock(string key, string value)
         {
-            foreach (Win7Block block in Blocks)
+            foreach (VistaBlock block in Blocks)
             {
-                if (block.KeyAsStr == key && block.ValueAsStr == value)
+                if (block.ValueAsStr == value)
                 {
                     Blocks.Remove(block);
                     return;
@@ -263,9 +245,9 @@ namespace LibTSforge.PhysicalStore
 
         public void DeleteBlock(string key, uint value)
         {
-            foreach (Win7Block block in Blocks)
+            foreach (VistaBlock block in Blocks)
             {
-                if (block.KeyAsStr == key && block.ValueAsInt == value)
+                if (block.ValueAsInt == value)
                 {
                     Blocks.Remove(block);
                     return;
@@ -273,13 +255,13 @@ namespace LibTSforge.PhysicalStore
             }
         }
 
-        public PhysicalStoreWin7(string primaryPath, bool production)
+        public PhysicalStoreVista(string primaryPath, bool production)
         {
             TSPrimary = File.Open(primaryPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             TSSecondary = File.Open(primaryPath.Replace("-0.", "-1."), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             Production = production;
 
-            Deserialize(PhysStoreCrypto.DecryptPhysicalStore(TSPrimary.ReadAllBytes(), production, PSVersion.Win7));
+            Deserialize(PhysStoreCrypto.DecryptPhysicalStore(TSPrimary.ReadAllBytes(), production, PSVersion.Vista));
             TSPrimary.Seek(0, SeekOrigin.Begin);
         }
 
@@ -287,7 +269,7 @@ namespace LibTSforge.PhysicalStore
         {
             if (TSPrimary.CanWrite && TSSecondary.CanWrite)
             {
-                byte[] data = PhysStoreCrypto.EncryptPhysicalStore(Serialize(), Production, PSVersion.Win7);
+                byte[] data = PhysStoreCrypto.EncryptPhysicalStore(Serialize(), Production, PSVersion.Vista);
 
                 TSPrimary.SetLength(data.LongLength);
                 TSSecondary.SetLength(data.LongLength);
@@ -305,14 +287,14 @@ namespace LibTSforge.PhysicalStore
 
         public byte[] ReadRaw()
         {
-            byte[] data = PhysStoreCrypto.DecryptPhysicalStore(TSPrimary.ReadAllBytes(), Production, PSVersion.Win7);
+            byte[] data = PhysStoreCrypto.DecryptPhysicalStore(TSPrimary.ReadAllBytes(), Production, PSVersion.Vista);
             TSPrimary.Seek(0, SeekOrigin.Begin);
             return data;
         }
 
         public void WriteRaw(byte[] data)
         {
-            byte[] encrData = PhysStoreCrypto.EncryptPhysicalStore(data, Production, PSVersion.Win7);
+            byte[] encrData = PhysStoreCrypto.EncryptPhysicalStore(data, Production, PSVersion.Vista);
 
             TSPrimary.SetLength(encrData.LongLength);
             TSSecondary.SetLength(encrData.LongLength);
@@ -331,7 +313,7 @@ namespace LibTSforge.PhysicalStore
         {
             List<PSBlock> results = new List<PSBlock>();
 
-            foreach (Win7Block block in Blocks)
+            foreach (VistaBlock block in Blocks)
             {
                 if (block.ValueAsStr.Contains(valueSearch))
                 {
@@ -339,7 +321,7 @@ namespace LibTSforge.PhysicalStore
                     {
                         Type = block.Type,
                         Flags = block.Flags,
-                        Key = block.Key,
+                        Key = new byte[0],
                         Value = block.Value,
                         Data = block.Data
                     });
@@ -353,7 +335,7 @@ namespace LibTSforge.PhysicalStore
         {
             List<PSBlock> results = new List<PSBlock>();
 
-            foreach (Win7Block block in Blocks)
+            foreach (VistaBlock block in Blocks)
             {
                 if (block.ValueAsInt == valueSearch)
                 {
@@ -361,7 +343,7 @@ namespace LibTSforge.PhysicalStore
                     {
                         Type = block.Type,
                         Flags = block.Flags,
-                        Key = block.Key,
+                        Key = new byte[0],
                         Value = block.Value,
                         Data = block.Data
                     });

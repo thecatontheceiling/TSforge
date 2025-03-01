@@ -44,40 +44,40 @@ namespace LibTSforge.SPP
 
         public static readonly Guid WINDOWS_APP_ID = new Guid("55c92734-d682-4d71-983e-d6ec3f16059f");
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
         private static extern void SLOpen(out IntPtr hSLC);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
         private static extern void SLClose(IntPtr hSLC);
 
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLGetWindowsInformationDWORD(string ValueName, ref int Value);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLInstallProofOfPurchase(IntPtr hSLC, string pwszPKeyAlgorithm, string pwszPKeyString, uint cbPKeySpecificData, byte[] pbPKeySpecificData, ref Guid PKeyId);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLUninstallProofOfPurchase(IntPtr hSLC, ref Guid PKeyId);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLGetPKeyInformation(IntPtr hSLC, ref Guid pPKeyId, string pwszValueName, out SLDATATYPE peDataType, out uint pcbValue, out IntPtr ppbValue);
 
-        [DllImport("sppcext.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slcext.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLActivateProduct(IntPtr hSLC, ref Guid pProductSkuId, byte[] cbAppSpecificData, byte[] pvAppSpecificData, byte[] pActivationInfo, string pwszProxyServer, ushort wProxyPort);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLGenerateOfflineInstallationId(IntPtr hSLC, ref Guid pProductSkuId, ref string ppwszInstallationId);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLDepositOfflineConfirmationId(IntPtr hSLC, ref Guid pProductSkuId, string pwszInstallationId, string pwszConfirmationId);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLGetSLIDList(IntPtr hSLC, SLIDTYPE eQueryIdType, ref Guid pQueryId, SLIDTYPE eReturnIdType, out uint pnReturnIds, out IntPtr ppReturnIds);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
         private static extern void SLGetLicensingStatusInformation(IntPtr hSLC, ref Guid pAppID, IntPtr pProductSkuId, string pwszRightName, out uint pnStatusCount, out IntPtr ppLicensingStatus);
 
-        [DllImport("sppc.dll", CharSet = CharSet.Unicode)]
+        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLGetInstalledProductKeyIds(IntPtr hSLC, ref Guid pProductSkuId, out uint pnProductKeyIds, out IntPtr ppProductKeyIds);
 
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]

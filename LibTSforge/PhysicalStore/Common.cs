@@ -18,4 +18,11 @@ namespace LibTSforge.PhysicalStore
         public ulong Time2;
         public ulong Expiry;
     }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct VistaTimer
+    {
+        public ulong Time;
+        public ulong Expiry;
+    }
 }

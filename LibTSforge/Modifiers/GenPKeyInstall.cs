@@ -31,6 +31,7 @@ namespace LibTSforge.Modifiers
 
         public static void InstallGenPKey(PSVersion version, bool production, Guid actId)
         {
+            if (version == PSVersion.Vista) throw new NotSupportedException("This feature is not supported on Windows Vista/Server 2008.");
             if (actId == Guid.Empty) throw new ArgumentException("Activation ID must be specified for generated product key install.");
 
             PKeyConfig pkc = new PKeyConfig();
@@ -72,57 +73,57 @@ namespace LibTSforge.Modifiers
 
             if (pkey.Channel == "Volume:GVLK" && version == PSVersion.Win7) throw new NotSupportedException("Fake GVLK generation is not supported on Windows 7.");
 
-            VariableBag pkb = new VariableBag();
-            pkb.Blocks.AddRange(new CRCBlock[]
+            VariableBag pkb = new VariableBag(version);
+            pkb.Blocks.AddRange(new CRCBlockModern[]
             {
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.STRING,
                     KeyAsStr = "SppPkeyBindingProductKey",
                     ValueAsStr = pkey.ToString()
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.STRING,
                     KeyAsStr = "SppPkeyBindingMPC",
                     ValueAsStr = pkey.GetMPC()
                 },
-                new CRCBlock {
+                new CRCBlockModern {
                     DataType = CRCBlockType.BINARY,
                     KeyAsStr = "SppPkeyBindingPid2",
                     ValueAsStr = pkey.GetPid2()
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.BINARY,
                     KeyAsStr = "SppPkeyBindingPid3",
                     Value = pkey.GetPid3()
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.BINARY,
                     KeyAsStr = "SppPkeyBindingPid4",
                     Value = pkey.GetPid4()
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.STRING,
                     KeyAsStr = "SppPkeyChannelId",
                     ValueAsStr = pkey.Channel
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.STRING,
                     KeyAsStr = "SppPkeyBindingEditionId",
                     ValueAsStr = pkey.Edition
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.BINARY,
                     KeyAsStr = (version == PSVersion.Win7) ? "SppPkeyShortAuthenticator" : "SppPkeyPhoneActivationData",
                     Value = pkey.GetPhoneData(version)
                 },
-                new CRCBlock
+                new CRCBlockModern
                 {
                     DataType = CRCBlockType.BINARY,
                     KeyAsStr = "SppPkeyBindingMiscData",
@@ -140,11 +141,11 @@ namespace LibTSforge.Modifiers
                 SLApi.UninstallAllProductKeys(appId);
             }
 
-            Utils.KillSPP();
+            SPPUtils.KillSPP(version);
 
-            using (IPhysicalStore ps = Utils.GetStore(version, production))
+            using (IPhysicalStore ps = SPPUtils.GetStore(version, production))
             {
-                using (ITokenStore tks = Utils.GetTokenStore(version))
+                using (ITokenStore tks = SPPUtils.GetTokenStore(version))
                 {
                     Logger.WriteLine("Writing to physical store and token store...");
 
@@ -195,7 +196,7 @@ namespace LibTSforge.Modifiers
                         Data = pkb.Serialize()
                     });
 
-                    string cachePath = Utils.GetTokensPath(version).Replace("tokens.dat", @"cache\cache.dat");
+                    string cachePath = SPPUtils.GetTokensPath(version).Replace("tokens.dat", @"cache\cache.dat");
                     if (File.Exists(cachePath)) File.Delete(cachePath);
                 }
             }

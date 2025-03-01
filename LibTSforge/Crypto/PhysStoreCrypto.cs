@@ -2,13 +2,15 @@ namespace LibTSforge.Crypto
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Security.Cryptography;
     using System.Text;
 
     public static class PhysStoreCrypto
     {
-        public static byte[] DecryptPhysicalStore(byte[] data, bool production)
+        public static byte[] DecryptPhysicalStore(byte[] data, bool production, PSVersion version)
         {
             byte[] rsaKey = production ? Keys.PRODUCTION : Keys.TEST;
             BinaryReader br = new BinaryReader(new MemoryStream(data));
@@ -20,13 +22,23 @@ namespace LibTSforge.Crypto
             {
                 byte[] aesKey = CryptoUtils.RSADecrypt(rsaKey, encAesKey);
                 byte[] decData = CryptoUtils.AESDecrypt(br.ReadBytes((int)br.BaseStream.Length - 0x110), aesKey);
-                byte[] hmacKey = decData.Take(0x10).ToArray();
-                byte[] hmacSig = decData.Skip(0x10).Take(0x14).ToArray();
+                byte[] hmacKey = decData.Take(0x10).ToArray(); // SHA-1 salt on Vista
+                byte[] hmacSig = decData.Skip(0x10).Take(0x14).ToArray(); // SHA-1 hash on Vista
                 byte[] psData = decData.Skip(0x28).ToArray();
 
-                if (!CryptoUtils.HMACVerify(hmacKey, psData, hmacSig))
+                if (version != PSVersion.Vista)
                 {
-                    Logger.WriteLine("Warning: Failed to verify HMAC. Physical store is either corrupt or in Vista format.");
+                    if (!CryptoUtils.HMACVerify(hmacKey, psData, hmacSig))
+                    {
+                        throw new InvalidDataException("Failed to verify HMAC. Physical store is corrupt.");
+                    }
+                }
+                else
+                {
+                    if (!CryptoUtils.SaltSHAVerify(hmacKey, psData, hmacSig))
+                    {
+                        throw new InvalidDataException("Failed to verify checksum. Physical store is corrupt.");
+                    }
                 }
 
                 return psData;
@@ -39,6 +51,7 @@ namespace LibTSforge.Crypto
         {
             Dictionary<PSVersion, int> versionTable = new Dictionary<PSVersion, int>
             {
+                {PSVersion.Vista, 2},
                 {PSVersion.Win7, 5},
                 {PSVersion.Win8, 1},
                 {PSVersion.WinBlue, 2},
@@ -52,7 +65,7 @@ namespace LibTSforge.Crypto
 
             byte[] encAesKey = CryptoUtils.RSAEncrypt(rsaKey, aesKey);
             byte[] aesKeySig = CryptoUtils.RSASign(rsaKey, encAesKey);
-            byte[] hmacSig = CryptoUtils.HMACSign(hmacKey, data);
+            byte[] hmacSig = version != PSVersion.Vista ? CryptoUtils.HMACSign(hmacKey, data) : CryptoUtils.SaltSHASum(hmacKey, data);
 
             byte[] decData = new byte[] { };
             decData = decData.Concat(hmacKey).Concat(hmacSig).Concat(BitConverter.GetBytes(0)).Concat(data).ToArray();

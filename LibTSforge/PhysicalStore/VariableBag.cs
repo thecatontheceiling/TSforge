@@ -3,6 +3,7 @@ namespace LibTSforge.PhysicalStore
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Runtime.CompilerServices;
 
     public enum CRCBlockType : uint
     {
@@ -11,7 +12,7 @@ namespace LibTSforge.PhysicalStore
         BINARY = 1 << 2
     }
 
-    public class CRCBlock
+    public abstract class CRCBlock
     {
         public CRCBlockType DataType;
         public byte[] Key;
@@ -50,7 +51,57 @@ namespace LibTSforge.PhysicalStore
             }
         }
 
-        public void Encode(BinaryWriter writer)
+        public abstract void Encode(BinaryWriter writer);
+        public abstract void Decode(BinaryReader reader);
+        public abstract uint CRC();
+    }
+
+    public class CRCBlockVista : CRCBlock
+    {
+        public override void Encode(BinaryWriter writer)
+        {
+            uint crc = CRC();
+            writer.Write((uint)DataType);
+            writer.Write(0);
+            writer.Write(Key.Length);
+            writer.Write(Value.Length);
+            writer.Write(crc);
+
+            writer.Write(Key);
+
+            writer.Write(Value);
+        }
+
+        public override void Decode(BinaryReader reader)
+        {
+            uint type = reader.ReadUInt32();
+            uint unk_zero = reader.ReadUInt32();
+            uint lenName = reader.ReadUInt32();
+            uint lenVal = reader.ReadUInt32();
+            uint crc = reader.ReadUInt32();
+
+            byte[] key = reader.ReadBytes((int)lenName);
+            byte[] value = reader.ReadBytes((int)lenVal);
+
+            DataType = (CRCBlockType)type;
+            Key = key;
+            Value = value;
+
+            if (CRC() != crc)
+            {
+                throw new InvalidDataException("Invalid CRC in variable bag.");
+            }
+        }
+
+        public override uint CRC()
+        {
+            return Utils.CRC32(Value);
+        }
+    }
+
+    public class CRCBlockModern : CRCBlock
+    {
+        public override void Encode(BinaryWriter writer)
         {
             uint crc = CRC();
             writer.Write(crc);
@@ -65,7 +116,7 @@ namespace LibTSforge.PhysicalStore
             writer.Align(8);
         }
 
-        public static CRCBlock Decode(BinaryReader reader)
+        public override void Decode(BinaryReader reader)
         {
             uint crc = reader.ReadUInt32();
             uint type = reader.ReadUInt32();
@@ -78,22 +129,17 @@ namespace LibTSforge.PhysicalStore
             byte[] value = reader.ReadBytes((int)lenVal);
             reader.Align(8);
 
-            CRCBlock block = new CRCBlock
-            {
-                DataType = (CRCBlockType)type,
-                Key = key,
-                Value = value,
-            };
+            DataType = (CRCBlockType)type;
+            Key = key;
+            Value = value;
 
-            if (block.CRC() != crc)
+            if (CRC() != crc)
             {
                 throw new InvalidDataException("Invalid CRC in variable bag.");
             }
-
-            return block;
         }
 
-        public uint CRC()
+        public override uint CRC()
         {
             BinaryWriter wtemp = new BinaryWriter(new MemoryStream());
             wtemp.Write(0);
@@ -109,6 +155,7 @@ namespace LibTSforge.PhysicalStore
     public class VariableBag
     {
         public List<CRCBlock> Blocks = new List<CRCBlock>();
+        private PSVersion Version;
 
         public void Deserialize(byte[] data)
         {
@@ -118,7 +165,19 @@ namespace LibTSforge.PhysicalStore
 
             while (reader.BaseStream.Position < len - 0x10)
             {
-                Blocks.Add(CRCBlock.Decode(reader));
+                CRCBlock block;
+
+                if (Version == PSVersion.Vista)
+                {
+                    block = new CRCBlockVista();
+                }
+                else
+                {
+                    block = new CRCBlockModern();
+                }
+
+                block.Decode(reader);
+                Blocks.Add(block);
             }
         }
 
@@ -128,7 +187,13 @@ namespace LibTSforge.PhysicalStore
 
             foreach (CRCBlock block in Blocks)
             {
-                block.Encode(writer);
+                if (Version == PSVersion.Vista)
+                {
+                    ((CRCBlockVista)block).Encode(writer);
+                } else
+                {
+                    ((CRCBlockModern)block).Encode(writer);
+                }
             }
 
             return writer.GetBytes();
@@ -174,14 +239,15 @@ namespace LibTSforge.PhysicalStore
             }
         }
 
-        public VariableBag(byte[] data)
+        public VariableBag(byte[] data, PSVersion version)
         {
+            Version = version;
             Deserialize(data);
         }
 
-        public VariableBag()
+        public VariableBag(PSVersion version)
         {
-
+            Version = version;
         }
     }
 }

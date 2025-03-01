@@ -8,6 +8,8 @@ namespace LibTSforge.Modifiers
     {
         public static void DeleteUniqueId(PSVersion version, bool production, Guid actId)
         {
+            if (version == PSVersion.Vista) throw new NotSupportedException("This feature is not supported on Windows Vista/Server 2008.");
+
             Guid appId;
 
             if (actId == Guid.Empty)
@@ -28,11 +30,11 @@ namespace LibTSforge.Modifiers
             string instId = SLApi.GetInstallationID(actId);
             Guid pkeyId = SLApi.GetInstalledPkeyID(actId);
 
-            Utils.KillSPP();
+            SPPUtils.KillSPP(version);
 
             Logger.WriteLine("Writing TrustedStore data...");
 
-            using (IPhysicalStore store = Utils.GetStore(version, production))
+            using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
                 string key = string.Format("SPPSVC\\{0}\\{1}", appId, actId);
                 PSBlock keyBlock = store.GetBlock(key, pkeyId.ToString());
@@ -42,7 +44,7 @@ namespace LibTSforge.Modifiers
                     throw new Exception("No product key found.");
                 }
 
-                VariableBag pkb = new VariableBag(keyBlock.Data);
+                VariableBag pkb = new VariableBag(keyBlock.Data, version);
 
                 pkb.DeleteBlock("SppPkeyUniqueIdToken");
 
