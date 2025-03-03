@@ -9,6 +9,8 @@ namespace LibTSforge.Modifiers
     {
         public static void Charge(PSVersion version, bool production, Guid actId)
         {
+            if (version == PSVersion.Vista) throw new NotSupportedException("This feature is not supported on Windows Vista/Server 2008.");
+
             if (actId == Guid.Empty)
             {
                 actId = SLApi.GetDefaultActivationID(SLApi.WINDOWS_APP_ID, true);
