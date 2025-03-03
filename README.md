@@ -73,9 +73,26 @@ You can use the `/igpk` switch in TSforge in order to install licenses by only u
 
 You can use the `/igpk` and `/zcid` options with the activation ID of the KMS Host SKU to be activated. You can then use the `/kmsc` option with this activation ID to charge the KMS server with 25 clients. Please note that KMS servers will maintain their client counts for a maximum of 30 days.
 
-### Why is Windows Vista not supported by any activation methods?
+### What features are implemented in Windows Vista?
 
-Windows Vista contains a driver which holds a permanent [handle](https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/object-handles) to the physical store, even when SLSvc is stopped after initial startup. This prevents TSforge from writing new trusted store data while the system is booted. There are theoretical workarounds to this issue, but they require an extraordinary amount of bug-prone, specialized code specific to Vista. For these reasons, we do not plan to support Vista/Server 2008. 
+The following options are implemented:
+
+ - `/dump`
+ - `/load`
+ - `/zcid`
+ - `/kms4k`
+ - `/rtmr`
+ - `/rrmc`
+ - `/kmsc`
+ - `/ctpr`
+
+The following options are NOT implemented:
+
+ - `/duid`
+ - `/igpk`
+ - `/revl`
+
+ Effectively, this means that a product key must be provided to activate a given SKU. Additionally, ZeroCID on Vista/Server 2008 lacks protection against WGA.
 
 ### How do I prevent de-activation due to WAT on Windows 7?
 
