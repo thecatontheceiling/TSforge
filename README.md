@@ -88,9 +88,9 @@ The following options are implemented:
 
 The following options are NOT implemented:
 
- - `/duid`
- - `/igpk`
- - `/revl`
+ - `/duid` - Key Unique ID is not removable from Vista physical store
+ - `/igpk` - Product key data is derived directly from the key string, preventing forgery
+ - `/revl` - Eval key lock is not present on Vista
 
  Effectively, this means that a product key must be provided to activate a given SKU. Additionally, ZeroCID on Vista/Server 2008 lacks protection against WGA.
 
