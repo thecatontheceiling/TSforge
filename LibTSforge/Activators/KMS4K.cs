@@ -1,6 +1,7 @@
 namespace LibTSforge.Activators
 {
     using System;
+    using System.IO;
     using LibTSforge.PhysicalStore;
     using LibTSforge.SPP;
 
@@ -62,12 +63,18 @@ namespace LibTSforge.Activators
                 {
                     VistaTimer vistaTimer = new VistaTimer();
                     vistaTimer.Time = time2;
-                    vistaTimer.Expiry = expiry;
+                    vistaTimer.Expiry = Constants.TimerMax;
 
                     string vistaTimerName = string.Format("msft:sl/timer/VLExpiration/VOLUME/{0}/{1}", appId, actId);
 
                     store.DeleteBlock(key, vistaTimerName);
-                    store.DeleteBlock(key, "45E81E65-6944-422E-9C02-D83F7E5F5A58");
+                    store.DeleteBlock(key, actId.ToString());
+
+                    BinaryWriter writer = new BinaryWriter(new MemoryStream());
+                    writer.Write(Constants.KMSv4Response.Length);
+                    writer.Write(Constants.KMSv4Response);
+                    writer.Write(Constants.UniversalHWIDBlock);
+                    byte[] kmsData = writer.GetBytes();
 
                     store.AddBlocks(new PSBlock[]
                     {
@@ -84,8 +91,8 @@ namespace LibTSforge.Activators
                             Type = BlockType.NAMED,
                             Flags = 0,
                             KeyAsStr = key,
-                            ValueAsStr = "45E81E65-6944-422E-9C02-D83F7E5F5A58",
-                            Data = new Guid().ToByteArray()
+                            ValueAsStr = actId.ToString(),
+                            Data = kmsData
                         }
                     });
                 }
@@ -191,7 +198,7 @@ namespace LibTSforge.Activators
                 }
             }
 
-                SPPUtils.RestartSPP(version);
+            SPPUtils.RestartSPP(version);
             SLApi.FireStateChangedEvent(appId);
             Logger.WriteLine("Activated using KMS4k successfully.");
         }

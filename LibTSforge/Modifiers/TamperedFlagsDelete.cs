@@ -15,21 +15,24 @@ namespace LibTSforge.Modifiers
 
             using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
-                if (version != PSVersion.Win7)
+                if  (version == PSVersion.Vista)
                 {
-                    string recreatedFlag = "__##USERSEP-RESERVED##__$$RECREATED-FLAG$$";
-                    string recoveredFlag = "__##USERSEP-RESERVED##__$$RECOVERED-FLAG$$";
-
-                    DeleteFlag(store, recreatedFlag);
-                    DeleteFlag(store, recoveredFlag);
+                    DeleteFlag(store, "6BE8425B-E3CF-4e86-A6AF-5863E3DCB606");
+                }
+                else if (version == PSVersion.Win7)
+                {
+                    SetFlag(store, 0xA0001);
                 }
                 else
                 {
-                    SetFlag(store, 0xA0001);
+                    DeleteFlag(store, "__##USERSEP-RESERVED##__$$RECREATED-FLAG$$");
+                    DeleteFlag(store, "__##USERSEP-RESERVED##__$$RECOVERED-FLAG$$");
                 }
 
                 Logger.WriteLine("Successfully cleared the tamper state.");
             }
+
+            SPPUtils.RestartSPP(version);
         }
 
         private static void DeleteFlag(IPhysicalStore store, string flag)

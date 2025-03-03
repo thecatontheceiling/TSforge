@@ -252,6 +252,8 @@ namespace LibTSforge.SPP
                 File.WriteAllBytes(filePath, PhysStoreCrypto.DecryptPhysicalStore(encrData, production, version));
             }
 
+            RestartSPP(version);
+
             Logger.WriteLine("Store dumped successfully to '" + filePath + "'.");
         }
 
@@ -268,6 +270,8 @@ namespace LibTSforge.SPP
             {
                 store.WriteRaw(File.ReadAllBytes(filePath));
             }
+
+            RestartSPP(version);
 
             Logger.WriteLine("Loaded store file succesfully.");
         }
