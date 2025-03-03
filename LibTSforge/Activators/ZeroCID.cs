@@ -116,13 +116,7 @@ namespace LibTSforge.Activators
                         throw new FormatException("Key Unique ID has invalid format.");
                     }
 
-                    Console.WriteLine(group);
-                    Console.WriteLine(shortauth);
-
                     shortauth |= (ulong)group << 41;
-
-                    Console.WriteLine(shortauth);
-
                     pkeyData = BitConverter.GetBytes(shortauth);
                 }
                 else if (version == PSVersion.Win7)

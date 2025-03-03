@@ -165,7 +165,7 @@ namespace LibTSforge.SPP
                 uint count;
                 IntPtr pProductKeyIds;
 
-                status = SLGetInstalledProductKeyIds(sl.Handle, ref actId, out count, out pProductKeyIds);
+                status = SLGetSLIDList(sl.Handle, SLIDTYPE.SL_ID_PRODUCT_SKU, ref actId, SLIDTYPE.SL_ID_PKEY, out count, out pProductKeyIds);
 
                 if (status != 0 || count == 0)
                 {
