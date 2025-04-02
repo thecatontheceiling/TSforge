@@ -2,10 +2,7 @@ namespace LibTSforge.SPP
 {
     using Microsoft.Win32.SafeHandles;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Runtime.InteropServices;
-    using System.Text;
 
     public class SPSys
     {
@@ -24,7 +21,7 @@ namespace LibTSforge.SPP
         {
             SafeFileHandle file = CreateFileSafe(@"\\.\SpDevice");
             IntPtr buffer = Marshal.AllocHGlobal(1);
-            int bytesReturned = 0;
+            int bytesReturned;
             DeviceIoControl(file, 0x80006008, IntPtr.Zero, 0, buffer, 1, out bytesReturned, IntPtr.Zero);
             bool running = Marshal.ReadByte(buffer) != 0;
             Marshal.FreeHGlobal(buffer);
@@ -36,7 +33,7 @@ namespace LibTSforge.SPP
         {
             SafeFileHandle file = CreateFileSafe(@"\\.\SpDevice");
             IntPtr buffer = Marshal.AllocHGlobal(4);
-            int bytesReturned = 0;
+            int bytesReturned;
             DeviceIoControl(file, start ? 0x8000a000 : 0x8000a004, IntPtr.Zero, 0, buffer, 4, out bytesReturned, IntPtr.Zero);
             int result = Marshal.ReadInt32(buffer);
             Marshal.FreeHGlobal(buffer);

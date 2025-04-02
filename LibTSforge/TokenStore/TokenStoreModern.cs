@@ -25,17 +25,16 @@ namespace LibTSforge.TokenStore
             if (TokensFile.Length < BLOCK_SIZE) return;
 
             TokensFile.Seek(0x24, SeekOrigin.Begin);
-            uint nextBlock = 0;
+            uint nextBlock;
 
             BinaryReader reader = new BinaryReader(TokensFile);
             do
             {
-                uint curOffset = reader.ReadUInt32();
                 nextBlock = reader.ReadUInt32();
 
                 for (int i = 0; i < ENTRIES_PER_BLOCK; i++)
                 {
-                    curOffset = reader.ReadUInt32();
+                    uint curOffset = reader.ReadUInt32();
                     bool populated = reader.ReadUInt32() == 1;
                     uint contentOffset = reader.ReadUInt32();
                     uint contentLength = reader.ReadUInt32();

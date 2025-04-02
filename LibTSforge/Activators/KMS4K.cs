@@ -61,9 +61,11 @@ namespace LibTSforge.Activators
 
                 if (version == PSVersion.Vista)
                 {
-                    VistaTimer vistaTimer = new VistaTimer();
-                    vistaTimer.Time = time2;
-                    vistaTimer.Expiry = Constants.TimerMax;
+                    VistaTimer vistaTimer = new VistaTimer
+                    {
+                        Time = time2,
+                        Expiry = Constants.TimerMax
+                    };
 
                     string vistaTimerName = string.Format("msft:sl/timer/VLExpiration/VOLUME/{0}/{1}", appId, actId);
 

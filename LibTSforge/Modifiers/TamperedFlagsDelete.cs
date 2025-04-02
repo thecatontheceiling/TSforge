@@ -1,6 +1,5 @@
 namespace LibTSforge.Modifiers
 {
-    using System;
     using System.Linq;
     using LibTSforge.PhysicalStore;
     using LibTSforge.SPP;

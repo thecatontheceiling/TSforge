@@ -75,7 +75,7 @@ namespace LibTSforge.SPP
     public class PKeyConfig
     {
         public Dictionary<Guid, ProductConfig> Products = new Dictionary<Guid, ProductConfig>();
-        private List<Guid> loadedPkeyConfigs = new List<Guid>();
+        private readonly List<Guid> loadedPkeyConfigs = new List<Guid>();
 
         public void LoadConfig(Guid actId)
         {
@@ -136,12 +136,14 @@ namespace LibTSforge.SPP
                         ranges[refActIdStr] = new List<KeyRange>();
                     }
 
-                    KeyRange keyRange = new KeyRange();
-                    keyRange.Start = int.Parse(rangeNode.SelectSingleNode("./p:Start", nsmgr).InnerText);
-                    keyRange.End = int.Parse(rangeNode.SelectSingleNode("./p:End", nsmgr).InnerText);
-                    keyRange.EulaType = rangeNode.SelectSingleNode("./p:EulaType", nsmgr).InnerText;
-                    keyRange.PartNumber = rangeNode.SelectSingleNode("./p:PartNumber", nsmgr).InnerText;
-                    keyRange.Valid = rangeNode.SelectSingleNode("./p:IsValid", nsmgr).InnerText.ToLower() == "true";
+                    KeyRange keyRange = new KeyRange
+                    {
+                        Start = int.Parse(rangeNode.SelectSingleNode("./p:Start", nsmgr).InnerText),
+                        End = int.Parse(rangeNode.SelectSingleNode("./p:End", nsmgr).InnerText),
+                        EulaType = rangeNode.SelectSingleNode("./p:EulaType", nsmgr).InnerText,
+                        PartNumber = rangeNode.SelectSingleNode("./p:PartNumber", nsmgr).InnerText,
+                        Valid = rangeNode.SelectSingleNode("./p:IsValid", nsmgr).InnerText.ToLower() == "true"
+                    };
 
                     ranges[refActIdStr].Add(keyRange);
                 }
@@ -155,15 +157,17 @@ namespace LibTSforge.SPP
 
                     if (keyRanges.Count > 0 && !Products.ContainsKey(refActId))
                     {
-                        ProductConfig productConfig = new ProductConfig();
-                        productConfig.GroupId = group;
-                        productConfig.Edition = configNode.SelectSingleNode("./p:EditionId", nsmgr).InnerText;
-                        productConfig.Description = configNode.SelectSingleNode("./p:ProductDescription", nsmgr).InnerText;
-                        productConfig.Channel = configNode.SelectSingleNode("./p:ProductKeyType", nsmgr).InnerText;
-                        productConfig.Randomized = configNode.SelectSingleNode("./p:ProductKeyType", nsmgr).InnerText.ToLower() == "true";
-                        productConfig.Algorithm = algorithms[group];
-                        productConfig.Ranges = keyRanges;
-                        productConfig.ActivationId = refActId;
+                        ProductConfig productConfig = new ProductConfig
+                        {
+                            GroupId = group,
+                            Edition = configNode.SelectSingleNode("./p:EditionId", nsmgr).InnerText,
+                            Description = configNode.SelectSingleNode("./p:ProductDescription", nsmgr).InnerText,
+                            Channel = configNode.SelectSingleNode("./p:ProductKeyType", nsmgr).InnerText,
+                            Randomized = configNode.SelectSingleNode("./p:ProductKeyType", nsmgr).InnerText.ToLower() == "true",
+                            Algorithm = algorithms[group],
+                            Ranges = keyRanges,
+                            ActivationId = refActId
+                        };
 
                         Products[refActId] = productConfig;
                     }

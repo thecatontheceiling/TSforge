@@ -1,16 +1,10 @@
 namespace LibTSforge
 {
-    using Microsoft.Win32;
     using System;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
-    using System.ServiceProcess;
     using System.Text;
-    using LibTSforge.Crypto;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
-    using LibTSforge.TokenStore;
 
     public enum PSVersion
     {

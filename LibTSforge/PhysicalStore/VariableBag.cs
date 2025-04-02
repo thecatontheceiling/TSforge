@@ -3,7 +3,6 @@ namespace LibTSforge.PhysicalStore
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Runtime.CompilerServices;
 
     public enum CRCBlockType : uint
     {
@@ -155,7 +154,7 @@ namespace LibTSforge.PhysicalStore
     public class VariableBag
     {
         public List<CRCBlock> Blocks = new List<CRCBlock>();
-        private PSVersion Version;
+        private readonly PSVersion Version;
 
         public void Deserialize(byte[] data)
         {
