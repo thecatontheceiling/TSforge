@@ -223,7 +223,7 @@ namespace TSforgeCLI
             Logger.WriteLine("\t/revl                                   Remove the key change lock in evaluation edition store.");
             Logger.WriteLine("\t/prod                                   Use SPP production key.");
             Logger.WriteLine("\t/test                                   Use SPP test key.");
-            Logger.WriteLine("\t/ver <version>                          Override the detected version. Available versions: vista, 7, 8early, 8, blue, modern.");
+            Logger.WriteLine("\t/ver <version>                          Override the detected version. Available versions: vista, 7, 8, blue, modern.");
             Logger.WriteLine("\t<activation id>                         A specific activation ID. Useful if you want to activate specific addons like ESU.");
             Logger.WriteLine("\t/?                                      Display this help message.");
         }
@@ -234,7 +234,6 @@ namespace TSforgeCLI
             {
                 case "vista": return PSVersion.Vista;
                 case "7": return PSVersion.Win7;
-                case "8early": return PSVersion.Win8Early;
                 case "8": return PSVersion.Win8;
                 case "blue": return PSVersion.WinBlue;
                 case "modern": return PSVersion.WinModern;

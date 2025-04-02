@@ -10,7 +10,6 @@ namespace LibTSforge
     {
         Vista,
         Win7,
-        Win8Early,
         Win8,
         WinBlue,
         WinModern
