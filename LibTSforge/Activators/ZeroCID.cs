@@ -111,7 +111,8 @@ namespace LibTSforge.Activators
                     try
                     {
                         shortauth = BitConverter.ToUInt64(Convert.FromBase64String(uniqueId.Split('&')[1]), 0);
-                    } catch
+                    } 
+                    catch
                     {
                         throw new FormatException("Key Unique ID has invalid format.");
                     }

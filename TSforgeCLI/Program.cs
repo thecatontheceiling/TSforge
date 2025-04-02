@@ -52,7 +52,7 @@ namespace TSforgeCLI
                 }
 
                 PSVersion version = options.Version ?? Utils.DetectVersion();
-                bool production = options.Production ?? Utils.DetectCurrentKey();
+                bool production = options.Production ?? SPPUtils.DetectCurrentKey();
 
                 if (options.Dump)
                 {
