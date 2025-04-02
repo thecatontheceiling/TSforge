@@ -5,11 +5,9 @@ namespace LibTSforge.SPP
     using LibTSforge.TokenStore;
     using Microsoft.Win32;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.ServiceProcess;
-    using System.Text;
 
     public static class SPPUtils
     {
@@ -128,6 +126,24 @@ namespace LibTSforge.SPP
             }
 
             SLApi.RefreshLicenseStatus();
+        }
+
+        public static bool DetectCurrentKey()
+        {
+            SLApi.RefreshLicenseStatus();
+
+            using (RegistryKey wpaKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\WPA"))
+            {
+                foreach (string subKey in wpaKey.GetSubKeyNames())
+                {
+                    if (subKey.StartsWith("8DEC0AF1"))
+                    {
+                        return subKey.Contains("P");
+                    }
+                }
+            }
+
+            throw new FileNotFoundException("Failed to autodetect key type, specify physical store key with /prod or /test arguments.");
         }
 
         public static string GetPSPath(PSVersion version)

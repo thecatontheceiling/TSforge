@@ -243,24 +243,6 @@ namespace LibTSforge
 
             throw new NotSupportedException("Unable to auto-detect version info");
         }
-
-        public static bool DetectCurrentKey()
-        {
-            SLApi.RefreshLicenseStatus();
-
-            using (RegistryKey wpaKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\WPA"))
-            {
-                foreach (string subKey in wpaKey.GetSubKeyNames())
-                {
-                    if (subKey.StartsWith("8DEC0AF1"))
-                    {
-                        return subKey.Contains("P");
-                    }
-                }
-            }
-
-            throw new FileNotFoundException("Failed to autodetect key type, specify physical store key with /prod or /test arguments.");
-        }
     }
 
     public static class Logger
