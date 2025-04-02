@@ -46,8 +46,9 @@ namespace LibTSforge.SPP
                 {
                     continue;
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException ex)
                 {
+                    Logger.WriteLine("Warning: Stopping sppsvc failed, retrying. Details:" + ex.Message);
                     System.Threading.Thread.Sleep(500);
                     continue;
                 }
@@ -110,8 +111,9 @@ namespace LibTSforge.SPP
                     {
                         continue;
                     }
-                    catch (InvalidOperationException)
+                    catch (InvalidOperationException ex)
                     {
+                        Logger.WriteLine("Warning: Starting slsvc failed, retrying. Details:" + ex.Message);
                         System.Threading.Thread.Sleep(500);
                         continue;
                     }
@@ -250,9 +252,13 @@ namespace LibTSforge.SPP
 
         public static void DumpStore(PSVersion version, bool production, string filePath, string encrFilePath)
         {
+            bool manageSpp = false;
+
             if (encrFilePath == null)
             {
                 encrFilePath = GetPSPath(version);
+                manageSpp = true;
+                KillSPP(version);
             }
 
             if (string.IsNullOrEmpty(encrFilePath) || !File.Exists(encrFilePath))
@@ -260,17 +266,22 @@ namespace LibTSforge.SPP
                 throw new FileNotFoundException("Store does not exist at expected path '" + encrFilePath + "'.");
             }
 
-            KillSPP(version);
-
-            using (FileStream fs = File.Open(encrFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+            try
             {
-                byte[] encrData = fs.ReadAllBytes();
-                File.WriteAllBytes(filePath, PhysStoreCrypto.DecryptPhysicalStore(encrData, production, version));
+                using (FileStream fs = File.Open(encrFilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    byte[] encrData = fs.ReadAllBytes();
+                    File.WriteAllBytes(filePath, PhysStoreCrypto.DecryptPhysicalStore(encrData, production, version));
+                }
+                Logger.WriteLine("Store dumped successfully to '" + filePath + "'.");
             }
-
-            RestartSPP(version);
-
-            Logger.WriteLine("Store dumped successfully to '" + filePath + "'.");
+            finally
+            {
+                if (manageSpp)
+                {
+                    RestartSPP(version);
+                }
+            }
         }
 
         public static void LoadStore(PSVersion version, bool production, string filePath)
