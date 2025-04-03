@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "TSforgeCLI": {
-      "commandName": "Project",
-      "commandLineArgs": "/dump vista.dat blah.dat /ver vista"
-    }
-  }
-}
