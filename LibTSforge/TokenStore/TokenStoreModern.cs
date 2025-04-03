@@ -30,6 +30,7 @@ namespace LibTSforge.TokenStore
             BinaryReader reader = new BinaryReader(TokensFile);
             do
             {
+                reader.ReadUInt32();
                 nextBlock = reader.ReadUInt32();
 
                 for (int i = 0; i < ENTRIES_PER_BLOCK; i++)

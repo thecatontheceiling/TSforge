@@ -183,6 +183,12 @@ namespace LibTSforge
 
     public static class Utils
     {
+        [DllImport("kernel32.dll")]
+        public static extern uint GetSystemDefaultLCID();
+
+        [DllImport("kernel32.dll")]
+        public static extern bool Wow64EnableWow64FsRedirection(bool Wow64FsEnableRedirection);
+
         public static string DecodeString(byte[] data)
         {
             return Encoding.Unicode.GetString(data).Trim('\0');
@@ -192,9 +198,6 @@ namespace LibTSforge
         {
             return Encoding.Unicode.GetBytes(str + '\0');
         }
-
-        [DllImport("kernel32.dll")]
-        public static extern uint GetSystemDefaultLCID();
 
         public static uint CRC32(byte[] data)
         {

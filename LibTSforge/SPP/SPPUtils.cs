@@ -33,7 +33,7 @@ namespace LibTSforge.SPP
 
             bool stopped = false;
 
-            for (int i = 0; stopped == false && i < 360; i++)
+            for (int i = 0; stopped == false && i < 1080; i++)
             {
                 try
                 {
@@ -48,7 +48,7 @@ namespace LibTSforge.SPP
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Logger.WriteLine("Warning: Stopping sppsvc failed, retrying. Details:" + ex.Message);
+                    Logger.WriteLine("Warning: Stopping sppsvc failed, retrying. Details: " + ex.Message);
                     System.Threading.Thread.Sleep(500);
                     continue;
                 }

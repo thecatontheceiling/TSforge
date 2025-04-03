@@ -8,7 +8,7 @@ namespace LibTSforge.Activators
     {
         public static void Activate(PSVersion version, bool production, Guid actId)
         {
-            if (version != PSVersion.WinModern)
+            if (version != PSVersion.WinModern && version != PSVersion.WinBlue)
             {
                 throw new NotSupportedException("AVMA licenses are not available for this product.");
             }

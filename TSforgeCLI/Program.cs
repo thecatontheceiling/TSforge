@@ -35,6 +35,8 @@ namespace TSforgeCLI
         {
             Logger.WriteLine("TSforge (c) MASSGRAVE 2025");
 
+            Utils.Wow64EnableWow64FsRedirection(false);
+
             try
             {
                 if (args.Length == 0)
