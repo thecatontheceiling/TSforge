@@ -161,14 +161,15 @@ namespace LibTSforge.SPP
                 default:
                     return Path.Combine(
                         Environment.ExpandEnvironmentVariables(
-                            (string)Registry.GetValue(
-                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
+                            (string)RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, Environment.MachineName)
+                            .OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SoftwareProtectionPlatform")
+                            .GetValue(
                                 "TokenStore",
                                 string.Empty
-                                )
-                            ),
-                            "data.dat"
-                        );
+                            )
+                        ),
+                        "data.dat"
+                    );
             }
         }
 
@@ -189,14 +190,15 @@ namespace LibTSforge.SPP
                 default:
                     return Path.Combine(
                         Environment.ExpandEnvironmentVariables(
-                            (string)Registry.GetValue(
-                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
+                            (string)RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, Environment.MachineName)
+                            .OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SoftwareProtectionPlatform")
+                            .GetValue(
                                 "TokenStore",
                                 string.Empty
-                                )
-                            ),
-                            "tokens.dat"
-                        );
+                            )
+                        ),
+                        "tokens.dat"
+                    );
             }
         }
 
@@ -204,14 +206,11 @@ namespace LibTSforge.SPP
         {
             string psPath;
 
-            try
+
             {
                 psPath = GetPSPath(version);
             }
-            catch
-            {
-                throw new FileNotFoundException("Failed to get path of physical store.");
-            }
+
 
             if (string.IsNullOrEmpty(psPath) || !File.Exists(psPath))
             {
