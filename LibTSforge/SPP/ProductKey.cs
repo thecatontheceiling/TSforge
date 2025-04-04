@@ -249,10 +249,8 @@ namespace LibTSforge.SPP
         {
             if (version == PSVersion.Win7)
             {
-                Random rnd = new Random(Group * 1000000000 + Serial);
-                byte[] data = new byte[8];
-                rnd.NextBytes(data);
-                return data;
+                ulong shortauth = ((ulong)Group << 41) | ((ulong)Security << 31) | ((ulong)Serial << 1) | (Upgrade ? (ulong)1 : 0);
+                return BitConverter.GetBytes(shortauth);
             }
 
             int serialHigh = Serial / 1000000;
