@@ -32,6 +32,11 @@ namespace LibTSforge.SPP
             get { return BitConverter.GetBytes(klow).Concat(BitConverter.GetBytes(khigh)).ToArray(); }
         }
 
+        public ProductKey()
+        {
+
+        }
+
         public ProductKey(int serial, ulong security, bool upgrade, PKeyAlgorithm algorithm, ProductConfig config, KeyRange range)
         {
             Group = config.GroupId;
@@ -254,7 +259,9 @@ namespace LibTSforge.SPP
             int serialLow = Serial % 1000000;
 
             BinaryWriter writer = new BinaryWriter(new MemoryStream());
-            writer.Write(new Guid("B8731595-A2F6-430B-A799-FBFFB81A8D73").ToByteArray());
+            string algoId = Algorithm == PKeyAlgorithm.PKEY2005 ? "B8731595-A2F6-430B-A799-FBFFB81A8D73" : "660672EF-7809-4CFD-8D54-41B7FB738988";
+
+            writer.Write(new Guid(algoId).ToByteArray());
             writer.Write(Group);
             writer.Write(serialHigh);
             writer.Write(serialLow);

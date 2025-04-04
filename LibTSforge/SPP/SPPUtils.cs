@@ -113,7 +113,7 @@ namespace LibTSforge.SPP
                     }
                     catch (InvalidOperationException ex)
                     {
-                        Logger.WriteLine("Warning: Starting slsvc failed, retrying. Details:" + ex.Message);
+                        Logger.WriteLine("Warning: Starting slsvc failed, retrying. Details: " + ex.Message);
                         System.Threading.Thread.Sleep(500);
                         continue;
                     }
@@ -161,11 +161,10 @@ namespace LibTSforge.SPP
                 default:
                     return Path.Combine(
                         Environment.ExpandEnvironmentVariables(
-                            (string)RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, Environment.MachineName)
-                            .OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SoftwareProtectionPlatform")
-                            .GetValue(
+                            (string)Registry.GetValue(
+                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
                                 "TokenStore",
-                                string.Empty
+                                @"C:\Windows\System32\spp\store\2.0"
                             )
                         ),
                         "data.dat"
@@ -190,11 +189,10 @@ namespace LibTSforge.SPP
                 default:
                     return Path.Combine(
                         Environment.ExpandEnvironmentVariables(
-                            (string)RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, Environment.MachineName)
-                            .OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\SoftwareProtectionPlatform")
-                            .GetValue(
+                            (string)Registry.GetValue(
+                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
                                 "TokenStore",
-                                string.Empty
+                                @"C:\Windows\System32\spp\store\2.0"
                             )
                         ),
                         "tokens.dat"
