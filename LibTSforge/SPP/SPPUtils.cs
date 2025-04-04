@@ -206,11 +206,14 @@ namespace LibTSforge.SPP
         {
             string psPath;
 
-
+            try
             {
                 psPath = GetPSPath(version);
+            } 
+            catch
+            {
+                throw new FileNotFoundException("Failed to get path of physical store.");
             }
-
 
             if (string.IsNullOrEmpty(psPath) || !File.Exists(psPath))
             {
@@ -238,7 +241,7 @@ namespace LibTSforge.SPP
             }
             catch
             {
-                throw new FileNotFoundException("Failed to get path of physical store.");
+                throw new FileNotFoundException("Failed to get path of token store.");
             }
 
             if (string.IsNullOrEmpty(tokPath) || !File.Exists(tokPath))
