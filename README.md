@@ -26,23 +26,24 @@ Included methods and tools:
 ```
 Usage: TSforge [/dump <filePath> (<encrFilePath>)] [/load <filePath>] [/kms4k] [/avma4k] [/zcid] [/rtmr] [/duid] [/igpk] [/kmsc] [/ctpr] [/revl] [/prod] [/test] [<activation id>] [/ver <version override>]
 Options:
-        /dump <filePath> (<encrFilePath>)       Dump and decrypt the physical store to the specified path.
-        /load <filePath>                        Load and re-encrypt the physical store from the specified path.
-        /kms4k                                  Activate using KMS4k. Only supports KMS-activatable editions.
-        /avma4k                                 Activate using AVMA4k. Only supports Windows Server 2012 R2+.
-        /zcid                                   Activate using ZeroCID. Only supports phone-activatable editions.
-        /rtmr                                   Reset grace/evaluation period timers.
-        /rrmc                                   Reset the rearm count.
-        /duid                                   Delete product key Unique ID used in online key validation.
-        /igpk                                   Install auto-generated/fake product key according to the specified Activation ID.
-        /kmsc                                   Reset the charged count on the local KMS server to 25. Requires an activated KMS host.
-        /ctpr                                   Clear the physical store tamper state.
-        /revl                                   Remove the key change lock in evaluation edition store.
-        /prod                                   Use SPP production key.
-        /test                                   Use SPP test key.
-        /ver <version>                          Override the detected version. Available versions: vista, 7, 8early, 8, blue, modern.
-        <activation id>                         A specific activation ID. Useful if you want to activate specific addons like ESU.
-        /?                                      Display this help message.
+        /dump <filePath> (<encrFilePath>)         Dump and decrypt the physical store to the specified path.
+        /load <filePath>                          Load and re-encrypt the physical store from the specified path.
+        /kms4k                                    Activate using KMS4k. Only supports KMS-activatable editions.
+        /avma4k                                   Activate using AVMA4k. Only supports Windows Server 2012 R2+.
+        /zcid                                     Activate using ZeroCID. Only supports phone-activatable editions.
+        /rtmr                                     Reset grace/evaluation period timers.
+        /rrmc                                     Reset the rearm count.
+        /duid                                     Delete product key Unique ID used in online key validation.
+        /igpk                                     Install auto-generated/fake product key according to the specified Activation ID
+        /kmsc                                     Reset the charged count on the local KMS server to 25. Requires an activated KMS host.
+        /ctpr                                     Remove the tamper flags that get set in the physical store when sppsvc detects an attempt to tamper with it.
+        /revl                                     Remove the key change lock in evaluation edition store.
+        /siid <5/9> <group> <serial> <security>   Set Installation ID parameters independently of installed key. 5/9 argument specifies PKEY200[5/9] key algorithm.
+        /prod                                     Use SPP production key.
+        /test                                     Use SPP test key.
+        /ver <version>                            Override the detected version. Available versions: vista, 7, 8, blue, modern.
+        <activation id>                           A specific activation ID. Useful if you want to activate specific addons like ESU.
+        /?                                        Display this help message.
 ```
 
 ## FAQ
