@@ -164,7 +164,10 @@ namespace LibTSforge.SPP
                             (string)Registry.GetValue(
                                 @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
                                 "TokenStore",
-                                @"C:\Windows\System32\spp\store\2.0"
+                                Path.Combine(
+                                    Environment.GetFolderPath(Environment.SpecialFolder.System), 
+                                    @"spp\store\2.0"
+                                )
                             )
                         ),
                         "data.dat"
@@ -192,7 +195,10 @@ namespace LibTSforge.SPP
                             (string)Registry.GetValue(
                                 @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
                                 "TokenStore",
-                                @"C:\Windows\System32\spp\store\2.0"
+                                Path.Combine(
+                                    Environment.GetFolderPath(Environment.SpecialFolder.System), 
+                                    @"spp\store\2.0"
+                                )
                             )
                         ),
                         "tokens.dat"
@@ -204,13 +210,13 @@ namespace LibTSforge.SPP
         {
             string psPath;
 
-            try
+            //try
             {
                 psPath = GetPSPath(version);
             } 
-            catch
+            //catch
             {
-                throw new FileNotFoundException("Failed to get path of physical store.");
+                //throw new FileNotFoundException("Failed to get path of physical store.");
             }
 
             if (string.IsNullOrEmpty(psPath) || !File.Exists(psPath))
