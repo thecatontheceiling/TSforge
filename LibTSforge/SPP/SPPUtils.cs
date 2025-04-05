@@ -159,19 +159,44 @@ namespace LibTSforge.SPP
                         "7B296FB0-376B-497e-B012-9C450E1B7327-*.C7483456-A289-439d-8115-601632D005A0")
                     .FirstOrDefault() ?? "";
                 default:
-                    return Path.Combine(
-                        Environment.ExpandEnvironmentVariables(
-                            (string)Registry.GetValue(
-                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
-                                "TokenStore",
-                                Path.Combine(
-                                    Environment.GetFolderPath(Environment.SpecialFolder.System), 
-                                    @"spp\store\2.0"
-                                )
-                            )
-                        ),
-                        "data.dat"
+                    string psDir = Environment.ExpandEnvironmentVariables(
+                        (string)Registry.GetValue(
+                            @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
+                            "TokenStore",
+                            ""
+                        )
                     );
+                    string psPath = Path.Combine(psDir, "data.dat");
+
+                    if (string.IsNullOrEmpty(psDir) || !File.Exists(psPath))
+                    {
+                        string[] psDirs =
+                        {
+                            @"spp\store",
+                            @"spp\store\2.0",
+                            @"spp\store_test",
+                            @"spp\store_test\2.0"
+                        };
+
+                        foreach (string dir in psDirs)
+                        {
+                            psPath = Path.Combine(
+                                Path.Combine(
+                                    Environment.GetFolderPath(Environment.SpecialFolder.System),
+                                    dir
+                                ),
+                                "data.dat"
+                            );
+
+                            if (File.Exists(psPath)) return psPath;
+                        }
+                    } 
+                    else
+                    {
+                        return psPath;
+                    }
+
+                    throw new FileNotFoundException("Failed to locate physical store.");
             }
         }
 
@@ -190,39 +215,50 @@ namespace LibTSforge.SPP
                         @"ServiceProfiles\NetworkService\AppData\Roaming\Microsoft\SoftwareProtectionPlatform\tokens.dat"
                     );
                 default:
-                    return Path.Combine(
-                        Environment.ExpandEnvironmentVariables(
-                            (string)Registry.GetValue(
-                                @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
-                                "TokenStore",
-                                Path.Combine(
-                                    Environment.GetFolderPath(Environment.SpecialFolder.System), 
-                                    @"spp\store\2.0"
-                                )
-                            )
-                        ),
-                        "tokens.dat"
+                    string tokDir = Environment.ExpandEnvironmentVariables(
+                        (string)Registry.GetValue(
+                            @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SoftwareProtectionPlatform",
+                            "TokenStore",
+                            ""
+                        )
                     );
+                    string tokPath = Path.Combine(tokDir, "tokens.dat");
+
+                    if (string.IsNullOrEmpty(tokDir) || !File.Exists(tokPath))
+                    {
+                        string[] tokDirs =
+                        {
+                            @"spp\store",
+                            @"spp\store\2.0",
+                            @"spp\store_test",
+                            @"spp\store_test\2.0"
+                        };
+
+                        foreach (string dir in tokDirs)
+                        {
+                            tokPath = Path.Combine(
+                                Path.Combine(
+                                    Environment.GetFolderPath(Environment.SpecialFolder.System),
+                                    dir
+                                ),
+                                "tokens.dat"
+                            );
+
+                            if (File.Exists(tokPath)) return tokPath;
+                        }
+                    }
+                    else
+                    {
+                        return tokPath;
+                    }
+
+                    throw new FileNotFoundException("Failed to locate token store.");
             }
         }
 
         public static IPhysicalStore GetStore(PSVersion version, bool production)
         {
-            string psPath;
-
-            try
-            {
-                psPath = GetPSPath(version);
-            } 
-            catch
-            {
-                throw new FileNotFoundException("Failed to get path of physical store.");
-            }
-
-            if (string.IsNullOrEmpty(psPath) || !File.Exists(psPath))
-            {
-                throw new FileNotFoundException(string.Format("Physical store not found at expected path {0}.", psPath));
-            }
+            string psPath = GetPSPath(version);
 
             switch (version)
             {
@@ -237,21 +273,7 @@ namespace LibTSforge.SPP
 
         public static ITokenStore GetTokenStore(PSVersion version)
         {
-            string tokPath;
-
-            try
-            {
-                tokPath = GetTokensPath(version);
-            }
-            catch
-            {
-                throw new FileNotFoundException("Failed to get path of token store.");
-            }
-
-            if (string.IsNullOrEmpty(tokPath) || !File.Exists(tokPath))
-            {
-                throw new FileNotFoundException(string.Format("Token store not found at expected path {0}.", tokPath));
-            }
+            string tokPath = GetTokensPath(version);
 
             return new TokenStoreModern(tokPath);
         }
