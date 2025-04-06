@@ -149,20 +149,6 @@ namespace LibTSforge
             }
             return result;
         }
-
-        public static T CastToStruct<T>(this byte[] data) where T : struct
-        {
-            GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            try
-            {
-                IntPtr ptr = handle.AddrOfPinnedObject();
-                return (T)Marshal.PtrToStructure(ptr, typeof(T));
-            }
-            finally
-            {
-                handle.Free();
-            }
-        }
     }
 
     public static class FileStreamExt
