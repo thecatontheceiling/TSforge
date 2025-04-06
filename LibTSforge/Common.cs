@@ -81,7 +81,7 @@ namespace LibTSforge
         };
 
         // 2^31 - 8 minutes
-        public static ulong TimerMax = (ulong)TimeSpan.FromMinutes(2147483640).Ticks;
+        public static readonly ulong TimerMax = (ulong)TimeSpan.FromMinutes(2147483640).Ticks;
 
         public static readonly string ZeroCID = new string('0', 48);
     }
