@@ -238,7 +238,6 @@ namespace TSforgeCLI
                         {
                             Logger.WriteLine("Argument doesn't exist or the specified activation ID is invalid.");
                             options.ShowHelp = true;
-                            break;
                         }
                         break;
                 }
