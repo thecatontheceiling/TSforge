@@ -105,7 +105,7 @@ If generic keys are installed, you need to run `TSforge.exe /duid` to remove the
 
 Windows doesn't support AVMA activation under VM software that fails to provide [Hyper-V Enlightenments](https://www.qemu.org/docs/master/system/i386/hyperv.html). This primarily means that AVMA4k is only supported on VMs running under a [correctly configured QEMU instance](https://blog.wikichoon.com/2014/07/enabling-hyper-v-enlightenments-with-kvm.html) or Hyper-V. If your VM's activation status is `Notification` with the status code `0xC004FD01` after using AVMA4k, you will need to use another activation method.
 
-## Does TSforge support beta versions of Windows?
+### Does TSforge support beta versions of Windows?
 
 It can, though we do not provide official support for these versions. TSforge works on most insider/beta builds of Windows past Windows 8.1. Beta builds prior to build 9600 are likely to face issues, as the internal data formats used by SPP were constantly changing during this period of development. Builds with similar licensing behavior to retail versions are the most likely to work with the current TSforge codebase. For other builds, you may need to manually edit the source code of LibTSforge to get it to work.
 
