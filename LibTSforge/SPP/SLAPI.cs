@@ -236,7 +236,7 @@ namespace LibTSforge.SPP
             }
         }
 
-        private static Guid GetLicenseFileId(Guid licId)
+        public static Guid GetLicenseFileId(Guid licId)
         {
             using (SLContext sl = new SLContext())
             {
