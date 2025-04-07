@@ -20,6 +20,7 @@ Included methods and tools:
 - KMS Charger - Charge an existing KMS server to allow immediate use for activation
 - Clear Tamper State - Clear the tamper state set due to store corruption or deletion
 - Remove Evaluation Key Lock - Remove the product key change lock set for evaluation product keys
+- Set IID Parameters - Set parameters for IID independently of installed key
 
 ## Usage
 
@@ -91,6 +92,7 @@ The following options are NOT implemented:
 
  - `/duid` - Key Unique ID is not removable from Vista physical store
  - `/igpk` - Product key data is derived directly from the key string, preventing forgery
+ - `/siid` - IID is also derived directly from the key string
  - `/revl` - Eval key lock is not present on Vista
 
  Effectively, this means that a product key must be provided to activate a given SKU. Additionally, ZeroCID on Vista/Server 2008 lacks protection against WGA.
@@ -102,6 +104,10 @@ If generic keys are installed, you need to run `TSforge.exe /duid` to remove the
 ### AVMA4k doesn't work in my virtual machine, why?
 
 Windows doesn't support AVMA activation under VM software that fails to provide [Hyper-V Enlightenments](https://www.qemu.org/docs/master/system/i386/hyperv.html). This primarily means that AVMA4k is only supported on VMs running under a [correctly configured QEMU instance](https://blog.wikichoon.com/2014/07/enabling-hyper-v-enlightenments-with-kvm.html) or Hyper-V. If your VM's activation status is `Notification` with the status code `0xC004FD01` after using AVMA4k, you will need to use another activation method.
+
+## Does TSforge support beta versions of Windows?
+
+It can, though we do not provide official support for these versions. TSforge works on most insider/beta builds of Windows past Windows 8.1. Beta builds prior to build 9600 are likely to face issues, as the internal data formats used by SPP were constantly changing during this period of development. Builds with similar licensing behavior to retail versions are the most likely to work with the current TSforge codebase. For other builds, you may need to manually edit the source code of LibTSforge to get it to work.
 
 ### How do I remove this activation?
 
@@ -134,7 +140,6 @@ Probably not. If they do, please tell us so we can laugh to ourselves like a bun
 
 ### Other Contributions
 
-- SpCreatePackaedLicense - Tool development, testing
 - Emma (IPG) - Vista SPSys IOCTLs and physical store format
 - May - Code formatting, build setup
 
