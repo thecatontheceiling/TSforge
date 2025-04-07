@@ -16,7 +16,7 @@ namespace LibTSforge.Crypto
             byte[] aesKeySig = br.ReadBytes(0x80);
             byte[] encAesKey = br.ReadBytes(0x80);
 
-            if (CryptoUtils.RSAVerifySignature(rsaKey, encAesKey, aesKeySig))
+            if (!CryptoUtils.RSAVerifySignature(rsaKey, encAesKey, aesKeySig))
             {
                 throw new Exception("Failed to decrypt physical store.");
             }

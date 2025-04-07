@@ -141,9 +141,9 @@ namespace LibTSforge.TokenStore
 
                         writer.BaseStream.Seek(curBlockOffset, SeekOrigin.Begin);
                         byte[] blockData = new byte[BLOCK_SIZE - 0x20];
-                        byte[] blockHash = CryptoUtils.SHA256Hash(blockData);
 
                         tokens.Read(blockData, 0, BLOCK_SIZE - 0x20);
+                        byte[] blockHash = CryptoUtils.SHA256Hash(blockData);
 
                         writer.BaseStream.Seek(curBlockOffset + BLOCK_SIZE - 0x20, SeekOrigin.Begin);
                         writer.Write(blockHash);
