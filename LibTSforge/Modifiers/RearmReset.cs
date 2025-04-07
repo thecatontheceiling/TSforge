@@ -2,8 +2,8 @@ namespace LibTSforge.Modifiers
 {
     using System.Collections.Generic;
     using System.Linq;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
+    using PhysicalStore;
+    using SPP;
 
     public static class RearmReset
     {

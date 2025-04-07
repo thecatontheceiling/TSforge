@@ -2,9 +2,8 @@ namespace LibTSforge.Modifiers
 {
     using System.Collections.Generic;
     using System.Linq;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
-    using LibTSforge;
+    using PhysicalStore;
+    using SPP;
     using System;
 
     public static class KeyChangeLockDelete

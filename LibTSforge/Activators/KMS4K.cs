@@ -2,8 +2,8 @@ namespace LibTSforge.Activators
 {
     using System;
     using System.IO;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
+    using PhysicalStore;
+    using SPP;
 
     public class KMS4k
     {
@@ -78,7 +78,7 @@ namespace LibTSforge.Activators
                     writer.Write(Constants.UniversalHWIDBlock);
                     byte[] kmsData = writer.GetBytes();
 
-                    store.AddBlocks(new PSBlock[]
+                    store.AddBlocks(new[]
                     {
                         new PSBlock
                         {
@@ -121,7 +121,7 @@ namespace LibTSforge.Activators
 
                     VariableBag kmsBinding = new VariableBag(version);
 
-                    kmsBinding.Blocks.AddRange(new CRCBlockModern[]
+                    kmsBinding.Blocks.AddRange(new[]
                     {
                     new CRCBlockModern
                     {
@@ -145,7 +145,7 @@ namespace LibTSforge.Activators
 
                     if (version == PSVersion.WinModern)
                     {
-                        kmsBinding.Blocks.AddRange(new CRCBlockModern[]
+                        kmsBinding.Blocks.AddRange(new[]
                         {
                         new CRCBlockModern
                         {
@@ -178,7 +178,7 @@ namespace LibTSforge.Activators
                     store.DeleteBlock(key, storeVal);
                     store.DeleteBlock(key, timerVal);
 
-                    store.AddBlocks(new PSBlock[]
+                    store.AddBlocks(new[]
                     {
                     new PSBlock
                     {

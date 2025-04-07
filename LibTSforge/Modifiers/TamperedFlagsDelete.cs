@@ -1,8 +1,8 @@
 namespace LibTSforge.Modifiers
 {
     using System.Linq;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
+    using PhysicalStore;
+    using SPP;
 
     public static class TamperedFlagsDelete
     {
@@ -14,7 +14,7 @@ namespace LibTSforge.Modifiers
 
             using (IPhysicalStore store = SPPUtils.GetStore(version, production))
             {
-                if  (version == PSVersion.Vista)
+                if (version == PSVersion.Vista)
                 {
                     DeleteFlag(store, "6BE8425B-E3CF-4e86-A6AF-5863E3DCB606");
                 }

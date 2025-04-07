@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using LibTSforge.PhysicalStore;
-using LibTSforge.SPP;
-
 namespace LibTSforge.Modifiers
 {
+    using PhysicalStore;
+    using SPP;
+    using System.IO;
+    using System;
     public static class SetIIDParams
     {
         public static void SetParams(PSVersion version, bool production, Guid actId, PKeyAlgorithm algorithm, int group, int serial, ulong security)

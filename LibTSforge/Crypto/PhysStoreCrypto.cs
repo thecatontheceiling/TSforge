@@ -18,31 +18,31 @@ namespace LibTSforge.Crypto
 
             if (CryptoUtils.RSAVerifySignature(rsaKey, encAesKey, aesKeySig))
             {
-                byte[] aesKey = CryptoUtils.RSADecrypt(rsaKey, encAesKey);
-                byte[] decData = CryptoUtils.AESDecrypt(br.ReadBytes((int)br.BaseStream.Length - 0x110), aesKey);
-                byte[] hmacKey = decData.Take(0x10).ToArray(); // SHA-1 salt on Vista
-                byte[] hmacSig = decData.Skip(0x10).Take(0x14).ToArray(); // SHA-1 hash on Vista
-                byte[] psData = decData.Skip(0x28).ToArray();
-
-                if (version != PSVersion.Vista)
-                {
-                    if (!CryptoUtils.HMACVerify(hmacKey, psData, hmacSig))
-                    {
-                        throw new InvalidDataException("Failed to verify HMAC. Physical store is corrupt.");
-                    }
-                }
-                else
-                {
-                    if (!CryptoUtils.SaltSHAVerify(hmacKey, psData, hmacSig))
-                    {
-                        throw new InvalidDataException("Failed to verify checksum. Physical store is corrupt.");
-                    }
-                }
-
-                return psData;
+                throw new Exception("Failed to decrypt physical store.");
             }
 
-            throw new Exception("Failed to decrypt physical store.");
+            byte[] aesKey = CryptoUtils.RSADecrypt(rsaKey, encAesKey);
+            byte[] decData = CryptoUtils.AESDecrypt(br.ReadBytes((int)br.BaseStream.Length - 0x110), aesKey);
+            byte[] hmacKey = decData.Take(0x10).ToArray(); // SHA-1 salt on Vista
+            byte[] hmacSig = decData.Skip(0x10).Take(0x14).ToArray(); // SHA-1 hash on Vista
+            byte[] psData = decData.Skip(0x28).ToArray();
+
+            if (version != PSVersion.Vista)
+            {
+                if (!CryptoUtils.HMACVerify(hmacKey, psData, hmacSig))
+                {
+                    throw new InvalidDataException("Failed to verify HMAC. Physical store is corrupt.");
+                }
+            }
+            else
+            {
+                if (!CryptoUtils.SaltSHAVerify(hmacKey, psData, hmacSig))
+                {
+                    throw new InvalidDataException("Failed to verify checksum. Physical store is corrupt.");
+                }
+            }
+
+            return psData;
         }
 
         public static byte[] EncryptPhysicalStore(byte[] data, bool production, PSVersion version)
@@ -65,7 +65,7 @@ namespace LibTSforge.Crypto
             byte[] aesKeySig = CryptoUtils.RSASign(rsaKey, encAesKey);
             byte[] hmacSig = version != PSVersion.Vista ? CryptoUtils.HMACSign(hmacKey, data) : CryptoUtils.SaltSHASum(hmacKey, data);
 
-            byte[] decData = new byte[] { };
+            byte[] decData = { };
             decData = decData.Concat(hmacKey).Concat(hmacSig).Concat(BitConverter.GetBytes(0)).Concat(data).ToArray();
             byte[] encData = CryptoUtils.AESEncrypt(decData, aesKey);
 

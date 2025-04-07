@@ -87,9 +87,6 @@ namespace LibTSforge.SPP
         private static extern uint SLGetProductSkuInformation(IntPtr hSLC, ref Guid pProductSkuId, string pwszValueName, out SLDATATYPE peDataType, out uint pcbValue, out IntPtr ppbValue);
 
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
-        private static extern uint SLGetProductSkuInformation(IntPtr hSLC, ref Guid pProductSkuId, string pwszValueName, IntPtr peDataType, out uint pcbValue, out IntPtr ppbValue);
-
-        [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLGetLicense(IntPtr hSLC, ref Guid pLicenseFileId, out uint pcbLicenseFile, out IntPtr ppbLicenseFile);
 
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
@@ -98,7 +95,7 @@ namespace LibTSforge.SPP
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         private static extern uint SLFireEvent(IntPtr hSLC, string pwszEventId, ref Guid pApplicationId);
 
-        public class SLContext : IDisposable
+        private class SLContext : IDisposable
         {
             public readonly IntPtr Handle;
 
@@ -161,11 +158,10 @@ namespace LibTSforge.SPP
         {
             using (SLContext sl = new SLContext())
             {
-                uint status;
                 uint count;
                 IntPtr pProductKeyIds;
 
-                status = SLGetSLIDList(sl.Handle, SLIDTYPE.SL_ID_PRODUCT_SKU, ref actId, SLIDTYPE.SL_ID_PKEY, out count, out pProductKeyIds);
+                uint status = SLGetSLIDList(sl.Handle, SLIDTYPE.SL_ID_PRODUCT_SKU, ref actId, SLIDTYPE.SL_ID_PKEY, out count, out pProductKeyIds);
 
                 if (status != 0 || count == 0)
                 {
@@ -189,7 +185,7 @@ namespace LibTSforge.SPP
             SLConsumeWindowsRight(0);
         }
 
-        public static bool RefreshTrustedTime(Guid actId)
+        public static void RefreshTrustedTime(Guid actId)
         {
             using (SLContext sl = new SLContext())
             {
@@ -197,8 +193,7 @@ namespace LibTSforge.SPP
                 uint count;
                 IntPtr ppbValue;
 
-                uint status = SLGetProductSkuInformation(sl.Handle, ref actId, "TrustedTime", out type, out count, out ppbValue);
-                return (int)status >= 0 && status != 0xC004F012;
+                SLGetProductSkuInformation(sl.Handle, ref actId, "TrustedTime", out type, out count, out ppbValue);
             }
         }
 
@@ -214,11 +209,10 @@ namespace LibTSforge.SPP
         {
             using (SLContext sl = new SLContext())
             {
-                uint status;
                 uint count;
                 IntPtr pAppIds;
 
-                status = SLGetSLIDList(sl.Handle, SLIDTYPE.SL_ID_PRODUCT_SKU, ref actId, SLIDTYPE.SL_ID_APPLICATION, out count, out pAppIds);
+                uint status = SLGetSLIDList(sl.Handle, SLIDTYPE.SL_ID_PRODUCT_SKU, ref actId, SLIDTYPE.SL_ID_APPLICATION, out count, out pAppIds);
 
                 if (status != 0 || count == 0)
                 {
@@ -242,15 +236,14 @@ namespace LibTSforge.SPP
             }
         }
 
-        public static Guid GetLicenseFileId(Guid licId)
+        private static Guid GetLicenseFileId(Guid licId)
         {
             using (SLContext sl = new SLContext())
             {
-                uint status;
                 uint count;
                 IntPtr ppReturnLics;
 
-                status = SLGetSLIDList(sl.Handle, SLIDTYPE.SL_ID_LICENSE, ref licId, SLIDTYPE.SL_ID_LICENSE_FILE, out count, out ppReturnLics);
+                uint status = SLGetSLIDList(sl.Handle, SLIDTYPE.SL_ID_LICENSE, ref licId, SLIDTYPE.SL_ID_LICENSE_FILE, out count, out ppReturnLics);
 
                 if (status != 0 || count == 0)
                 {
@@ -312,7 +305,7 @@ namespace LibTSforge.SPP
                 IntPtr ppbValue;
 
                 uint status = SLGetProductSkuInformation(sl.Handle, ref actId, "msft:sl/EUL/PHONE/PUBLIC", out type, out count, out ppbValue);
-                return status >= 0 && status != 0xC004F012;
+                return status != 0xC004F012;
             }
         }
 
@@ -395,11 +388,11 @@ namespace LibTSforge.SPP
             }
         }
 
-        public static uint UninstallProductKey(Guid pkeyId)
+        public static void UninstallProductKey(Guid pkeyId)
         {
             using (SLContext sl = new SLContext())
             {
-                return SLUninstallProofOfPurchase(sl.Handle, ref pkeyId);
+                SLUninstallProofOfPurchase(sl.Handle, ref pkeyId);
             }
         }
 

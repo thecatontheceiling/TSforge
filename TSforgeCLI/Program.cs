@@ -10,30 +10,30 @@ namespace TSforgeCLI
     {
         private class Options
         {
-            public bool Dump = false;
+            public bool Dump;
             public string DumpFilePath = "dump.dat";
-            public string EncrFilePath = null;
-            public bool Load = false;
+            public string EncrFilePath;
+            public bool Load;
             public string LoadFilePath = "load.dat";
-            public bool KMS4k = false;
-            public bool AVMA4k = false;
-            public bool ZCID = false;
-            public bool TimerReset = false;
-            public bool RearmReset = false;
-            public bool DeleteUniqueId = false;
-            public bool InstallGenPKey = false;
-            public bool KMSHostCharge = false;
-            public bool TamperedFlagsDelete = false;
-            public bool KeyChangeLockDelete = false;
-            public bool SetIIDParams = false;
-            public bool? Production = null;
-            public PSVersion? Version = null;
+            public bool KMS4k;
+            public bool AVMA4k;
+            public bool ZCID;
+            public bool TimerReset;
+            public bool RearmReset;
+            public bool DeleteUniqueId;
+            public bool InstallGenPKey;
+            public bool KMSHostCharge;
+            public bool TamperedFlagsDelete;
+            public bool KeyChangeLockDelete;
+            public bool SetIIDParams;
+            public bool? Production;
+            public PSVersion? Version;
             public Guid ActivationId = Guid.Empty;
-            public bool ShowHelp = false;
-            public PKeyAlgorithm? Algorithm = null;
-            public int Group = 0;
-            public int Serial = 0;
-            public ulong Security = 0;
+            public bool ShowHelp;
+            public PKeyAlgorithm? Algorithm;
+            public int Group;
+            public int Serial;
+            public ulong Security;
         }
 
         public static void Main(string[] args)
