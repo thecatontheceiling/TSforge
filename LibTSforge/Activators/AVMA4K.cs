@@ -50,8 +50,7 @@ namespace LibTSforge.Activators
                 ulong time1 = (ulong)(creationTime + tickCount + deltaTime);
                 ulong crcBindTime = (ulong)DateTime.UtcNow.ToFileTime();
                 ulong timerTime = crcBindTime / 10000;
-                ulong expiry = Constants.TimerMax;
-                expiry /= 10000;
+                ulong expiry = Constants.TimerMax / 10000;
 
                 VariableBag avmaBinding = new VariableBag(version);
 

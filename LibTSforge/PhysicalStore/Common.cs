@@ -4,9 +4,9 @@ namespace LibTSforge.PhysicalStore
 
     public enum BlockType : uint
     {
-        NONE, // unused
+        NONE,
         NAMED,
-        ATTRIBUTE, //unused
+        ATTRIBUTE,
         TIMER
     }
 

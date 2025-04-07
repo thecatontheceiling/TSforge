@@ -148,7 +148,7 @@ namespace LibTSforge.SPP
             throw new FileNotFoundException("Failed to autodetect key type, specify physical store key with /prod or /test arguments.");
         }
 
-        private static string GetPSPath(PSVersion version)
+        public static string GetPSPath(PSVersion version)
         {
             switch (version)
             {

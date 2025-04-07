@@ -4,6 +4,7 @@ namespace LibTSforge.Modifiers
     using SPP;
     using System.IO;
     using System;
+
     public static class SetIIDParams
     {
         public static void SetParams(PSVersion version, bool production, Guid actId, PKeyAlgorithm algorithm, int group, int serial, ulong security)

@@ -18,16 +18,16 @@ namespace LibTSforge.SPP
         public ulong Security;
         public bool Upgrade;
         public PKeyAlgorithm Algorithm;
-        private readonly string EulaType;
-        private readonly string PartNumber;
+        public readonly string EulaType;
+        public readonly string PartNumber;
         public readonly string Edition;
         public readonly string Channel;
-        private readonly Guid ActivationId;
+        public readonly Guid ActivationId;
 
         private string mpc;
         private string pid2;
 
-        private byte[] KeyBytes
+        public byte[] KeyBytes
         {
             get { return BitConverter.GetBytes(klow).Concat(BitConverter.GetBytes(khigh)).ToArray(); }
         }
@@ -91,16 +91,6 @@ namespace LibTSforge.SPP
             return new Guid(CryptoUtils.SHA256Hash(pkb.Serialize()).Take(16).ToArray());
         }
 
-        private string GetDefaultMPC()
-        {
-            int build = Environment.OSVersion.Version.Build;
-            string defaultMPC = build >= 10240 ? "03612" :
-                                build >= 9600 ? "06401" :
-                                build >= 9200 ? "05426" :
-                                "55041";
-            return defaultMPC;
-        }
-
         public string GetMPC()
         {
             if (mpc != null)
@@ -108,7 +98,12 @@ namespace LibTSforge.SPP
                 return mpc;
             }
 
-            mpc = GetDefaultMPC();
+            int build = Environment.OSVersion.Version.Build;
+
+            mpc = build >= 10240 ? "03612" :
+                    build >= 9600 ? "06401" :
+                    build >= 9200 ? "05426" :
+                    "55041";
 
             // setup.cfg doesn't exist in Windows 8+
             string setupcfg = string.Format(@"{0}\oobe\{1}", Environment.SystemDirectory, "setup.cfg");
@@ -205,7 +200,7 @@ namespace LibTSforge.SPP
             return writer.GetBytes();
         }
 
-        private string GetExtendedPid()
+        public string GetExtendedPid()
         {
             string mpc = GetMPC();
             int serialHigh = Serial / 1000000;
