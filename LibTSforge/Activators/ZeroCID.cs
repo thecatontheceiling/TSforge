@@ -3,14 +3,13 @@ namespace LibTSforge.Activators
     using System;
     using System.IO;
     using System.Linq;
-    using System.Text.RegularExpressions;
-    using LibTSforge.Crypto;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
+    using Crypto;
+    using PhysicalStore;
+    using SPP;
 
     public static class ZeroCID
     {
-        public static void Deposit(Guid actId, string instId)
+        private static void Deposit(Guid actId, string instId)
         {
             uint status = SLApi.DepositConfirmationID(actId, instId, Constants.ZeroCID);
             Logger.WriteLine(string.Format("Depositing fake CID status {0:X}", status));
@@ -98,7 +97,7 @@ namespace LibTSforge.Activators
                     string uniqueId = Utils.DecodeString(pkeyData.Skip(0x120).Take(0x80).ToArray());
                     string extPid = Utils.DecodeString(pkeyData.Skip(0x1A0).Take(0x80).ToArray());
 
-                    uint group = 0;
+                    uint group;
                     uint.TryParse(extPid.Split('-')[1], out group);
 
                     if (group == 0)
@@ -154,7 +153,7 @@ namespace LibTSforge.Activators
                 store.DeleteBlock(key, hwidBlockName);
                 store.DeleteBlock(key, pkeyInfoName);
 
-                store.AddBlocks(new PSBlock[] {
+                store.AddBlocks(new[] {
                     new PSBlock
                     {
                         Type = BlockType.NAMED,

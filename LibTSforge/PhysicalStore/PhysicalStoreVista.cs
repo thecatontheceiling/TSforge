@@ -3,7 +3,7 @@ namespace LibTSforge.PhysicalStore
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using LibTSforge.Crypto;
+    using Crypto;
 
     public class VistaBlock
     {
@@ -88,7 +88,7 @@ namespace LibTSforge.PhysicalStore
 
     public sealed class PhysicalStoreVista : IPhysicalStore
     {
-        private byte[] PreHeaderBytes = new byte[] { };
+        private byte[] PreHeaderBytes = { };
         private readonly List<VistaBlock> Blocks = new List<VistaBlock>();
         private readonly FileStream TSPrimary;
         private readonly FileStream TSSecondary;

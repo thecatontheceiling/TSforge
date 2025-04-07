@@ -14,7 +14,7 @@ namespace LibTSforge.TokenStore
     public class TokenMeta
     {
         public string Name;
-        public Dictionary<string, string> Data = new Dictionary<string, string>();
+        public readonly Dictionary<string, string> Data = new Dictionary<string, string>();
 
         public byte[] Serialize()
         {
@@ -37,7 +37,7 @@ namespace LibTSforge.TokenStore
             return writer.GetBytes();
         }
 
-        public void Deserialize(byte[] data)
+        private void Deserialize(byte[] data)
         {
             BinaryReader reader = new BinaryReader(new MemoryStream(data));
             reader.ReadInt32();

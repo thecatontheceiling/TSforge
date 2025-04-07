@@ -3,9 +3,9 @@ namespace LibTSforge.Modifiers
     using System;
     using System.IO;
     using Microsoft.Win32;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
-    using LibTSforge.TokenStore;
+    using PhysicalStore;
+    using SPP;
+    using TokenStore;
 
     public static class GenPKeyInstall
     {
@@ -58,7 +58,7 @@ namespace LibTSforge.Modifiers
             if (pkey.Algorithm == PKeyAlgorithm.PKEY2009)
             {
                 uint status = SLApi.InstallProductKey(pkey);
-                Logger.WriteLine(string.Format("Installing generated product key {0} status {1:X}", pkey.ToString(), status));
+                Logger.WriteLine(string.Format("Installing generated product key {0} status {1:X}", pkey, status));
 
                 if ((int)status < 0)
                 {
@@ -74,7 +74,7 @@ namespace LibTSforge.Modifiers
             if (pkey.Channel == "Volume:GVLK" && version == PSVersion.Win7) throw new NotSupportedException("Fake GVLK generation is not supported on Windows 7.");
 
             VariableBag pkb = new VariableBag(version);
-            pkb.Blocks.AddRange(new CRCBlockModern[]
+            pkb.Blocks.AddRange(new[]
             {
                 new CRCBlockModern
                 {
@@ -169,7 +169,7 @@ namespace LibTSforge.Modifiers
                     uriMap.Data[pkeyId] = pkey.GetAlgoUri();
                     tks.SetEntry(uriMapName, "xml", uriMap.Serialize());
 
-                    string skuMetaName = actId.ToString() + metSuffix;
+                    string skuMetaName = actId + metSuffix;
                     TokenMeta skuMeta = tks.GetMetaEntry(skuMetaName);
 
                     foreach (string k in skuMeta.Data.Keys)

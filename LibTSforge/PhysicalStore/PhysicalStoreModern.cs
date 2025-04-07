@@ -3,7 +3,7 @@ namespace LibTSforge.PhysicalStore
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using LibTSforge.Crypto;
+    using Crypto;
 
     public class ModernBlock
     {
@@ -93,7 +93,7 @@ namespace LibTSforge.PhysicalStore
 
     public sealed class PhysicalStoreModern : IPhysicalStore
     {
-        private byte[] PreHeaderBytes = new byte[] { };
+        private byte[] PreHeaderBytes = { };
         private readonly Dictionary<string, List<ModernBlock>> Data = new Dictionary<string, List<ModernBlock>>();
         private readonly FileStream TSFile;
         private readonly PSVersion Version;
@@ -281,40 +281,44 @@ namespace LibTSforge.PhysicalStore
 
         public void DeleteBlock(string key, string value)
         {
-            if (Data.ContainsKey(key))
+            if (!Data.ContainsKey(key))
             {
-                List<ModernBlock> blocks = Data[key];
-
-                foreach (ModernBlock block in blocks)
-                {
-                    if (block.ValueAsStr == value)
-                    {
-                        blocks.Remove(block);
-                        break;
-                    }
-                }
-
-                Data[key] = blocks;
+                return;
             }
+
+            List<ModernBlock> blocks = Data[key];
+
+            foreach (ModernBlock block in blocks)
+            {
+                if (block.ValueAsStr == value)
+                {
+                    blocks.Remove(block);
+                    break;
+                }
+            }
+
+            Data[key] = blocks;
         }
 
         public void DeleteBlock(string key, uint value)
         {
-            if (Data.ContainsKey(key))
+            if (!Data.ContainsKey(key))
             {
-                List<ModernBlock> blocks = Data[key];
-
-                foreach (ModernBlock block in blocks)
-                {
-                    if (block.ValueAsInt == value)
-                    {
-                        blocks.Remove(block);
-                        break;
-                    }
-                }
-
-                Data[key] = blocks;
+                return;
             }
+
+            List<ModernBlock> blocks = Data[key];
+
+            foreach (ModernBlock block in blocks)
+            {
+                if (block.ValueAsInt == value)
+                {
+                    blocks.Remove(block);
+                    break;
+                }
+            }
+
+            Data[key] = blocks;
         }
 
         public PhysicalStoreModern(string tsPath, bool production, PSVersion version)

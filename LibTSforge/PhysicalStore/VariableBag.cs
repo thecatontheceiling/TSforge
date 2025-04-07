@@ -74,7 +74,6 @@ namespace LibTSforge.PhysicalStore
         public override void Decode(BinaryReader reader)
         {
             uint type = reader.ReadUInt32();
-            uint unk_zero = reader.ReadUInt32();
             uint lenName = reader.ReadUInt32();
             uint lenVal = reader.ReadUInt32();
             uint crc = reader.ReadUInt32();
@@ -156,7 +155,7 @@ namespace LibTSforge.PhysicalStore
         public List<CRCBlock> Blocks = new List<CRCBlock>();
         private readonly PSVersion Version;
 
-        public void Deserialize(byte[] data)
+        private void Deserialize(byte[] data)
         {
             int len = data.Length;
 

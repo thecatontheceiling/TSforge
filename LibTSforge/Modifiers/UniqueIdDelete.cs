@@ -1,8 +1,8 @@
 namespace LibTSforge.Modifiers
 {
     using System;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
+    using PhysicalStore;
+    using SPP;
 
     public static class UniqueIdDelete
     {
@@ -27,7 +27,6 @@ namespace LibTSforge.Modifiers
                 appId = SLApi.GetAppId(actId);
             }
 
-            string instId = SLApi.GetInstallationID(actId);
             Guid pkeyId = SLApi.GetInstalledPkeyID(actId);
 
             SPPUtils.KillSPP(version);
