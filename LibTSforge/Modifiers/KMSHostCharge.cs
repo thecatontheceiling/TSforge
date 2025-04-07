@@ -2,8 +2,8 @@ namespace LibTSforge.Modifiers
 {
     using System;
     using System.IO;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
+    using PhysicalStore;
+    using SPP;
 
     public static class KMSHostCharge
     {
@@ -31,9 +31,9 @@ namespace LibTSforge.Modifiers
             string key = string.Format("SPPSVC\\{0}", appId);
             long ldapTimestamp = DateTime.Now.ToFileTime();
 
-            byte[] cmidGuids = new byte[] { };
-            byte[] reqCounts = new byte[] { };
-            byte[] kmsChargeData = new byte[] { };
+            byte[] cmidGuids = { };
+            byte[] reqCounts = { };
+            byte[] kmsChargeData = { };
 
             BinaryWriter writer = new BinaryWriter(new MemoryStream());
 
@@ -94,7 +94,7 @@ namespace LibTSforge.Modifiers
                 if (version != PSVersion.Vista)
                 {
                     VariableBag kmsCountData = new VariableBag(version);
-                    kmsCountData.Blocks.AddRange(new CRCBlockModern[]
+                    kmsCountData.Blocks.AddRange(new[]
                     {
                         new CRCBlockModern
                         {

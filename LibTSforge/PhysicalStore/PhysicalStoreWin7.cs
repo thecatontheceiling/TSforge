@@ -3,7 +3,7 @@ namespace LibTSforge.PhysicalStore
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using LibTSforge.Crypto;
+    using Crypto;
 
     public class Win7Block
     {
@@ -105,7 +105,7 @@ namespace LibTSforge.PhysicalStore
 
     public sealed class PhysicalStoreWin7 : IPhysicalStore
     {
-        private byte[] PreHeaderBytes = new byte[] { };
+        private byte[] PreHeaderBytes = { };
         private readonly List<Win7Block> Blocks = new List<Win7Block>();
         private readonly FileStream TSPrimary;
         private readonly FileStream TSSecondary;

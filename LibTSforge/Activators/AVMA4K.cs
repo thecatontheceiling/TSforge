@@ -1,8 +1,8 @@
 namespace LibTSforge.Activators
 {
     using System;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.SPP;
+    using PhysicalStore;
+    using SPP;
 
     public static class AVMA4k
     {
@@ -42,24 +42,19 @@ namespace LibTSforge.Activators
             {
                 string key = string.Format("SPPSVC\\{0}\\{1}", appId, actId);
 
-                ulong unknown = 0;
-                ulong time1;
-                ulong crcBindTime = (ulong)DateTime.UtcNow.ToFileTime();
-                ulong timerTime;
-
-                ulong expiry = Constants.TimerMax;
-
                 long creationTime = BitConverter.ToInt64(store.GetBlock("__##USERSEP##\\$$_RESERVED_$$\\NAMESPACE__", "__##USERSEP-RESERVED##__$$GLOBAL-CREATION-TIME$$").Data, 0);
                 long tickCount = BitConverter.ToInt64(store.GetBlock("__##USERSEP##\\$$_RESERVED_$$\\NAMESPACE__", "__##USERSEP-RESERVED##__$$GLOBAL-TICKCOUNT-UPTIME$$").Data, 0);
                 long deltaTime = BitConverter.ToInt64(store.GetBlock(key, "__##USERSEP-RESERVED##__$$UP-TIME-DELTA$$").Data, 0);
 
-                time1 = (ulong)(creationTime + tickCount + deltaTime);
-                timerTime = crcBindTime / 10000;
-                expiry /= 10000;
+                const ulong unknown = 0;
+                ulong time1 = (ulong)(creationTime + tickCount + deltaTime);
+                ulong crcBindTime = (ulong)DateTime.UtcNow.ToFileTime();
+                ulong timerTime = crcBindTime / 10000;
+                ulong expiry = Constants.TimerMax / 10000;
 
                 VariableBag avmaBinding = new VariableBag(version);
 
-                avmaBinding.Blocks.AddRange(new CRCBlockModern[]
+                avmaBinding.Blocks.AddRange(new[]
                 {
                     new CRCBlockModern
                     {
@@ -97,7 +92,7 @@ namespace LibTSforge.Activators
                 store.DeleteBlock(key, storeVal);
                 store.DeleteBlock(key, timerVal);
 
-                store.AddBlocks(new PSBlock[]
+                store.AddBlocks(new[]
                 {
                     new PSBlock
                     {

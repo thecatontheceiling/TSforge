@@ -74,7 +74,7 @@ namespace LibTSforge.SPP
 
     public class PKeyConfig
     {
-        public Dictionary<Guid, ProductConfig> Products = new Dictionary<Guid, ProductConfig>();
+        public readonly Dictionary<Guid, ProductConfig> Products = new Dictionary<Guid, ProductConfig>();
         private readonly List<Guid> loadedPkeyConfigs = new List<Guid>();
 
         public void LoadConfig(Guid actId)
@@ -209,11 +209,6 @@ namespace LibTSforge.SPP
 
                 }
             }
-        }
-
-        public PKeyConfig()
-        {
-
         }
     }
 }

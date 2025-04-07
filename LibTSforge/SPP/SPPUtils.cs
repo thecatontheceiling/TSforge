@@ -1,13 +1,13 @@
 namespace LibTSforge.SPP
 {
-    using LibTSforge.Crypto;
-    using LibTSforge.PhysicalStore;
-    using LibTSforge.TokenStore;
     using Microsoft.Win32;
     using System;
     using System.IO;
     using System.Linq;
     using System.ServiceProcess;
+    using Crypto;
+    using PhysicalStore;
+    using TokenStore;
 
     public static class SPPUtils
     {
@@ -328,7 +328,7 @@ namespace LibTSforge.SPP
 
             RestartSPP(version);
 
-            Logger.WriteLine("Loaded store file succesfully.");
+            Logger.WriteLine("Loaded store file successfully.");
         }
     }
 }
