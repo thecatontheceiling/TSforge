@@ -249,7 +249,7 @@ namespace TSforgeCLI
         private static void DisplayUsage()
         {
             string exeName = typeof(Program).Namespace;
-            Logger.WriteLine("Usage: " + exeName + " [/dump <filePath> (<encrFilePath>)] [/load <filePath>] [/kms4k] [/avma4k] [/zcid] [/rtmr] [/duid] [/igpk] [/kmsc] [/ctpr] [/revl] [/prod] [/test] [<activation id>] [/ver <version override>]");
+            Logger.WriteLine("Usage: " + exeName + " [/dump <filePath> (<encrFilePath>)] [/load <filePath>] [/kms4k] [/avma4k] [/zcid] [/rtmr] [/duid] [/igpk] [/kmsc] [/ctpr] [/revl] [/siid <5/9> <group> <serial> <security>] [/prod] [/test] [<activation id>] [/ver <version override>]");
             Logger.WriteLine("Options:");
             Logger.WriteLine("\t/dump <filePath> (<encrFilePath>)         Dump and decrypt the physical store to the specified path.");
             Logger.WriteLine("\t/load <filePath>                          Load and re-encrypt the physical store from the specified path.");

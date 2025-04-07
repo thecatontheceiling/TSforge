@@ -25,7 +25,7 @@ Included methods and tools:
 ## Usage
 
 ```
-Usage: TSforge [/dump <filePath> (<encrFilePath>)] [/load <filePath>] [/kms4k] [/avma4k] [/zcid] [/rtmr] [/duid] [/igpk] [/kmsc] [/ctpr] [/revl] [/prod] [/test] [<activation id>] [/ver <version override>]
+Usage: TSforge [/dump <filePath> (<encrFilePath>)] [/load <filePath>] [/kms4k] [/avma4k] [/zcid] [/rtmr] [/duid] [/igpk] [/kmsc] [/ctpr] [/revl] [/siid <5/9> <group> <serial> <security>] [/prod] [/test] [<activation id>] [/ver <version override>]
 Options:
         /dump <filePath> (<encrFilePath>)         Dump and decrypt the physical store to the specified path.
         /load <filePath>                          Load and re-encrypt the physical store from the specified path.
@@ -95,7 +95,7 @@ The following options are NOT implemented:
  - `/siid` - IID is also derived directly from the key string
  - `/revl` - Eval key lock is not present on Vista
 
- Effectively, this means that a product key must be provided to activate a given SKU. Additionally, ZeroCID on Vista/Server 2008 lacks protection against WGA.
+ Effectively, this means that a product key must be provided to activate a given SKU. Additionally, ZeroCID on Vista/Server 2008 lacks protection against deactivation due to the WGA update KB929391, though this update is no longer offered via Windows Update.
 
 ### How do I prevent de-activation due to WAT on Windows 7?
 
