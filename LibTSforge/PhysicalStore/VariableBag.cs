@@ -74,6 +74,7 @@ namespace LibTSforge.PhysicalStore
         public override void Decode(BinaryReader reader)
         {
             uint type = reader.ReadUInt32();
+            reader.ReadUInt32();
             uint lenName = reader.ReadUInt32();
             uint lenVal = reader.ReadUInt32();
             uint crc = reader.ReadUInt32();
